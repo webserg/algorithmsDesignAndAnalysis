@@ -13,7 +13,7 @@ import java.nio.file.Paths;
  * User: webserg
  * Date: 12.02.13
  */
-public class MergeSort {
+public class MergeSortInversionsCount {
     private static int[] source;
     private static long inversions;
 
