@@ -1,5 +1,6 @@
 import org.junit.Test;
 
+import java.util.Arrays;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -15,22 +16,22 @@ public class QuickSortComparCountLast {
         System.out.println("start...");
         int result[] = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9};
 //        int source[] = new int[]{9,8,7,6,5,4,3,2,1};
-//        int[] source = ShuffleArray.shuffle(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9});
+        int[] source = ShuffleArray.shuffle(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9});
 //        int[] source = new int[]{3, 8, 2, 5};
-        int source[] = FilesHelper.readIntArrayFromFile("resource/QuickSort.txt", 10000);
+//        int source[] = FilesHelper.readIntArrayFromFile("resource/QuickSort.txt", 10000);
 //        assertFalse(Arrays.equals(result, source));
-//        System.out.println(Arrays.toString(source));
+        System.out.println(Arrays.toString(source));
         quickSort(source, 0, source.length - 1);
         System.out.println("comparison = " + comparison);
         FilesHelper.writeIntArrayToFile("resource/out.txt", source);
-//        System.out.println(Arrays.toString(source));
-//        assertTrue(Arrays.equals(result, source));
+        System.out.println(Arrays.toString(source));
+        assertTrue(Arrays.equals(result, source));
     }
 
     private void quickSort(int a[], int str, int l) {
         if ((l - str) <= 0) return;
         comparison += l - str;
-        int pdx = choosePivot(a, str, l);
+        int pdx = str;
         pdx = partitioning(a, pdx, l);
         quickSort(a, str, pdx - 1);
         quickSort(a, pdx + 1, l);
@@ -57,14 +58,14 @@ public class QuickSortComparCountLast {
     }
 
     private int choosePivot(int a[], int str, int l) {
-        return pivotLikeFirstElement(a, str, l);
+        return pivotLikeLastElement(a, str, l);
     }
 
     private int pivotLikeFirstElement(int a[], int str, int l) {
         return str;
     }
 
-    private int pivotLikeLatElement(int a[], int str, int l) {
+    private int pivotLikeLastElement(int a[], int str, int l) {
         return l;
     }
 }

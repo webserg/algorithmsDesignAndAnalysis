@@ -1,75 +1,28 @@
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 /**
  * User: webserg
  * Date: 12.02.13
+ * This file contains all of the 100,000 integers between 1 and 100,000
+ * (inclusive) in some order, with no integer repeated.
+ * <p/>
+ * Your task is to compute the number of inversions in the file given,
+ * where the ith row of the file indicates the ith entry of an array.
+ *
+ * inversions = number of pair[i,j] of array indices with i < j and A[i] > A[j]
  */
 public class MergeSortInversionsCount {
     private static int[] source;
     private static long inversions;
 
-    private void writeIntArrayToFile(String filePath, int[] arr) {
-        Charset charset = Charset.forName("UTF-8");
-        Path path = Paths.get(filePath);
-        try (BufferedWriter writer = Files.newBufferedWriter(path, charset)) {
-            for (int i = 0; i < arr.length; i++) {
-                writer.write("" + arr[i], 0, ("" + arr[i]).length());
-                writer.newLine();
-            }
-            writer.flush();
-            writer.close();
-        } catch (IOException x) {
-            System.err.format("IOException: %s%n", x);
-        }
-    }
-
-    private void writeLongToFile(String filePath, long longNumber) {
-        Charset charset = Charset.forName("UTF-8");
-        Path path = Paths.get(filePath);
-        try (BufferedWriter writer = Files.newBufferedWriter(path, charset)) {
-            writer.write("" + longNumber, 0, ("" + longNumber).length());
-
-            writer.flush();
-            writer.close();
-        } catch (IOException x) {
-            System.err.format("IOException: %s%n", x);
-        }
-    }
-
-    private int[] readIntArrayToFile(String filePath, int arraySize) {
-        Charset charset = Charset.forName("UTF-8");
-        Path path = Paths.get(filePath);
-        int result[] = new int[arraySize];
-        int idx = 0;
-        try (BufferedReader reader = Files.newBufferedReader(path, charset)) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                result[idx++] = Integer.parseInt(line);
-            }
-
-            reader.close();
-        } catch (IOException x) {
-            System.err.format("IOException: %s%n", x);
-        }
-        return result;
-    }
-
     @Test
     public void testMergeSort() throws Exception {
         System.out.println("start...");
-        source = readIntArrayToFile("resource/IntegerArray.txt", 100000);
+        source = FilesHelper.readIntArrayFromFile("resource/IntegerArray.txt", 100000);
         mergeSort(source);
-        writeIntArrayToFile("resource/out.txt", source);
-        writeLongToFile("resource/inversions.txt", inversions);
+        FilesHelper.writeIntArrayToFile("resource/out.txt", source);
+        FilesHelper.writeLongToFile("resource/inversions.txt", inversions);
         System.out.println("inversions = " + inversions);
         Assert.assertEquals(2407905288L, inversions);
     }

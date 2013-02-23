@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"t",
+				"temp"
+			],
+			[
+				"tp",
+				"tmp_idx"
+			],
+			[
+				"l",
+				"length"
+			],
+			[
 				"N",
 				"NoAnswer"
 			],
@@ -84,16 +96,8 @@
 				"lst_cards"
 			],
 			[
-				"t",
-				"tail"
-			],
-			[
 				"g",
 				"goal"
-			],
-			[
-				"l",
-				"lst"
 			],
 			[
 				"re",
@@ -207,6 +211,25 @@
 	},
 	"buffers":
 	[
+		{
+			"contents": "import org.junit.Assert;\nimport org.junit.Test;\n\nimport java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.IOException;\nimport java.nio.charset.Charset;\nimport java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.Paths;\n\n/**\n * User: webserg\n * Date: 12.02.13\n */\npublic class MergeSort {\n    private static int[] source;\n    private static long inversions;\n\n    private void writeIntArrayToFile(String filePath, int[] arr) {\n        Charset charset = Charset.forName(\"UTF-8\");\n        Path path = Paths.get(filePath);\n        try (BufferedWriter writer = Files.newBufferedWriter(path, charset)) {\n            for (int i = 0; i < arr.length; i++) {\n                writer.write(\"\" + arr[i], 0, (\"\" + arr[i]).length());\n                writer.newLine();\n            }\n            writer.flush();\n            writer.close();\n        } catch (IOException x) {\n            System.err.format(\"IOException: %s%n\", x);\n        }\n    }\n\n    private void writeLongToFile(String filePath, long longNumber) {\n        Charset charset = Charset.forName(\"UTF-8\");\n        Path path = Paths.get(filePath);\n        try (BufferedWriter writer = Files.newBufferedWriter(path, charset)) {\n            writer.write(\"\" + longNumber, 0, (\"\" + longNumber).length());\n\n            writer.flush();\n            writer.close();\n        } catch (IOException x) {\n            System.err.format(\"IOException: %s%n\", x);\n        }\n    }\n\n    private int[] readIntArrayToFile(String filePath, int arraySize) {\n        Charset charset = Charset.forName(\"UTF-8\");\n        Path path = Paths.get(filePath);\n        int result[] = new int[arraySize];\n        int idx = 0;\n        try (BufferedReader reader = Files.newBufferedReader(path, charset)) {\n            String line;\n            while ((line = reader.readLine()) != null) {\n                result[idx++] = Integer.parseInt(line);\n            }\n\n            reader.close();\n        } catch (IOException x) {\n            System.err.format(\"IOException: %s%n\", x);\n        }\n        return result;\n    }\n\n    @Test\n    public void testMergeSort() throws Exception {\n        System.out.println(\"start...\");\n        source = readIntArrayToFile(\"resource/IntegerArray.txt\", 100000);\n        mergeSort(source);\n        writeIntArrayToFile(\"resource/out.txt\", source);\n        writeLongToFile(\"resource/inversions.txt\", inversions);\n        System.out.println(\"inversions = \" + inversions);\n        Assert.assertEquals(2407905288L, inversions);\n    }\n\n    public void mergeSort(int[] s) throws Exception {\n        source = s;\n        if (source.length < 2)\n            return;\n        split(0, s.length - 1);\n\n    }\n\n    private static void split(final int first, final int last) {\n        if (first < last) {\n            int middle = (first + last) >>> 1;\n            split(first, middle);\n            if (first < last) split(middle + 1, last);\n            merge(first, middle, middle + 1, last);\n        }\n    }\n\n    private static void merge(int fl, int ll, int fr, int lr) {\n        int[] temp = new int[source.length];\n        int tmp_idx = fl;\n        int saveF = fl;\n        while (fl <= ll && fr <= lr) {\n            if (source[fl] < source[fr]) {\n                temp[tmp_idx] = source[fl];\n                fl++;\n            } else {\n                temp[tmp_idx] = source[fr];\n                fr++;\n                inversions += (ll + 1 - fl);\n            }\n            tmp_idx++;\n        }\n        while (fl <= ll) temp[tmp_idx++] = source[fl++];\n        while (fr <= lr) temp[tmp_idx++] = source[fr++];\n        System.arraycopy(temp, saveF, source, saveF, lr - saveF + 1);\n    }\n}\n",
+			"file": "src/MergeSort.java",
+			"file_size": 3755,
+			"file_write_time": 130053425983550206,
+			"settings":
+			{
+				"buffer_size": 3642,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/QuickSortComparisonsCount.java",
+			"settings":
+			{
+				"buffer_size": 3781,
+				"line_ending": "Windows"
+			}
+		}
 	],
 	"build_system": "",
 	"command_palette":
@@ -236,6 +259,7 @@
 	},
 	"file_history":
 	[
+		"/C/devel/algorithmsDesignAndAnalysis/src/ShuffleArray.java",
 		"/C/devel/sml/homework1.sml",
 		"/C/devel/sml/mutable_ref_callback.sml",
 		"/C/devel/sml/partial _application.sml",
@@ -309,6 +333,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"while",
+			"                   ",
 			"callback",
 			"head",
 			"all_same_color",
@@ -335,8 +361,65 @@
 	"groups":
 	[
 		{
+			"selected": 1,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "src/MergeSort.java",
+					"settings":
+					{
+						"buffer_size": 3642,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								259,
+								259
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Java/Java.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/QuickSortComparisonsCount.java",
+					"settings":
+					{
+						"buffer_size": 3781,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2735,
+								2735
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Java/Java.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1584.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -396,6 +479,6 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 286.0,
+	"side_bar_width": 186.0,
 	"status_bar_visible": true
 }

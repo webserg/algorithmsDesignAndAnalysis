@@ -1,51 +1,52 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
-* User: webserg
-* Date: 22.02.13
-*/ //        List<Integer> vertexRange = new ArrayList<>(N);
+ * User: webserg
+ * Date: 22.02.13
+ */ //        List<Integer> vertexRange = new ArrayList<>(N);
 public class Graph {
     private int N;
-    List<Integer>[] adjacencyList = (ArrayList<Integer>[]) new ArrayList[N];
-    List<Integer> vertexRange = new ArrayList<>(N);
+    List<Integer>[] adjacencyList;
+    List<Integer> vertexRange;
+    private static Logger log = Logger.getLogger(Graph.class.getName());
 
+    {
+        log.setLevel(Level.SEVERE);
+    }
 
     public Graph(int n) {
         N = n;
+        adjacencyList = (ArrayList<Integer>[]) new ArrayList[N];
+        vertexRange = new ArrayList<>(N);
     }
 
     public int getN() {
         return N;
     }
 
-    private boolean mergeVertex(int v1, int v2) {
-//            adjacencyList[v2].remove(new Integer(v1));
+    protected boolean mergeVertex(int v1, int v2) {
         for (Integer v : adjacencyList[v1]) {
             if (v != v2) { //remove self loops
                 adjacencyList[v2].add(v);
                 adjacencyList[v].add(v2);
             }
-            System.out.print(v);
-            System.out.print(" ");
             adjacencyList[v].remove(new Integer(v1));
         }
         adjacencyList[v1] = null;
         vertexRange.remove(new Integer(v1));
-        System.out.println(" end merge");
         return true;
     }
 
-    public boolean isEquals(List<Integer> oVertex) {
-        if (oVertex.size() != vertexRange.size()) return false;
-        for (Integer v : oVertex) {
-            if (!vertexRange.contains(v)) return false;
+    public Graph deepCopy() {
+        Graph copy = new Graph(this.N);
+        for (int i = 0; i < this.adjacencyList.length; i++) {
+            copy.adjacencyList[i] = new ArrayList<>(this.adjacencyList[i]);
         }
-        return true;
+        copy.vertexRange = new ArrayList<>(this.vertexRange);
+        return copy;
     }
 
-    @Override
-    public int hashCode() {
-        return vertexRange.hashCode();
-    }
 }
