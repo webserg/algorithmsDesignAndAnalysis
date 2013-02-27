@@ -1,3 +1,5 @@
+import gnu.trove.list.array.TIntArrayList;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -83,6 +85,32 @@ public class FilesHelper {
                     int vv = Integer.parseInt(strNumber[i]) - 1;
                     graph.adjacencyList[v].add(vv);
                 }
+            }
+
+            reader.close();
+        } catch (IOException x) {
+            log.severe("IOException:" + x.getMessage());
+        }
+        return graph;
+    }
+
+    static GraphSCC readGraphSCCFromFile(String filePath, int arraySize) {
+        Charset charset = Charset.forName("UTF-8");
+        Path path = Paths.get(filePath);
+        GraphSCC graph = new GraphSCC(arraySize);
+        try (BufferedReader reader = Files.newBufferedReader(path, charset)) {
+            String line;
+            int curVertex = 0;
+            TIntArrayList edges = new TIntArrayList();
+            while ((line = reader.readLine()) != null) {
+                String[] strNumber = line.split("\\s+");
+                int v = Integer.parseInt(strNumber[0]) - 1;
+                if(curVertex != v){
+                    graph.adjacencyList[curVertex] = edges;
+                    edges = new TIntArrayList();
+                    curVertex = v;
+                }
+                edges.add(Integer.parseInt(strNumber[1]) - 1);
             }
 
             reader.close();
