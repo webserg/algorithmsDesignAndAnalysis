@@ -101,16 +101,20 @@ public class FilesHelper {
         try (BufferedReader reader = Files.newBufferedReader(path, charset)) {
             String line;
             int curVertex = 0;
-            TIntArrayList edges = new TIntArrayList();
+            TIntArrayList tails = new TIntArrayList();
+//            TIntArrayList tailsRev = new TIntArrayList();
             while ((line = reader.readLine()) != null) {
                 String[] strNumber = line.split("\\s+");
-                int v = Integer.parseInt(strNumber[0]) - 1;
-                if(curVertex != v){
-                    graph.adjacencyList[curVertex] = edges;
-                    edges = new TIntArrayList();
-                    curVertex = v;
+                int head = Integer.parseInt(strNumber[0]) - 1;
+                if(curVertex != head){
+                    graph.adjacencyListIn[curVertex] = tails;
+//                    graph.adjacencyListOut[curVertex] = tailsRev;
+                    tails = new TIntArrayList();
+//                    tailsRev = new TIntArrayList();
+                    curVertex = head;
                 }
-                edges.add(Integer.parseInt(strNumber[1]) - 1);
+                int tail = Integer.parseInt(strNumber[1]) - 1;
+                tails.add(tail);
             }
 
             reader.close();

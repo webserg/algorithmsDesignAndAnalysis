@@ -8,11 +8,13 @@ import java.util.BitSet;
  */
 public class GraphSCC {
     private int N;
-    TIntArrayList[] adjacencyList;
+    TIntArrayList[] adjacencyListIn;
+    TIntArrayList[] adjacencyListOut;
     BitSet vertexVisit;
     public GraphSCC(int n) {
         N = n;
-        adjacencyList =(TIntArrayList[]) new TIntArrayList[N];
+        adjacencyListIn =(TIntArrayList[]) new TIntArrayList[N];
+        adjacencyListOut =(TIntArrayList[]) new TIntArrayList[N];
         vertexVisit = new BitSet(N);
     }
 }
