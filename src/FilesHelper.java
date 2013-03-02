@@ -116,7 +116,7 @@ public class FilesHelper {
                 int tail = Integer.parseInt(strNumber[1]) - 1;
                 tails.add(tail);
             }
-
+            graph.adjacencyListIn[curVertex] = tails;
             reader.close();
         } catch (IOException x) {
             log.severe("IOException:" + x.getMessage());
