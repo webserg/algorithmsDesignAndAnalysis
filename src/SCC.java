@@ -1,4 +1,6 @@
 import gnu.trove.list.array.TIntArrayList;
+import gnu.trove.set.TIntSet;
+import gnu.trove.set.hash.TIntHashSet;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -58,6 +60,12 @@ public class SCC {
     }
 
     @Test
+    public void testScc9() throws Exception {
+        SCCCore sccCore = new SCCCore();
+        Assert.assertEquals(Arrays.toString(new int[]{ 2,1,0,0,0}), Arrays.toString(sccCore.run(3, "resource/SCCTest9.txt")));
+    }
+
+//    @Test
     public void testScc8() throws Exception {
         SCCCore sccCore = new SCCCore();
         Assert.assertEquals(Arrays.toString(new int[]{ 1,1,1,0,0}), Arrays.toString(sccCore.run(875714, "resource/SCC.txt")));
@@ -81,8 +89,8 @@ public class SCC {
             GraphSCC initGraph = FilesHelper.readGraphSCCFromFile(fileName, N);
             for (int i = N - 1; i >= 0; i--) {
                 if (!initGraph.vertexVisit.get(i)) {
-                    s = i;
-                    log.info("s=" + s);
+//                    s = i;
+//                    log.info("s=" + s);
                     dfs(initGraph, i);
                 }
             }
@@ -94,6 +102,7 @@ public class SCC {
                 if (!initGraph.vertexVisit.get(i)) {
                     s = i;
                     leader=0;
+                    log.info("s = " + s);
                     dfsLeader(initGraph, i);
                    // if(finalLeaderSize.peek())
                     finalLeaderSize.offer(leader);
@@ -123,7 +132,7 @@ public class SCC {
             if (arcs != null)
                 for (int j = 0; j < arcs.size(); j++) {
                     int arc = arcs.get(j);
-//                    log.info("arc=" + arc);
+                    log.info("arc=" + arc);
                     if (graph.adjacencyListOut[arc] == null) graph.adjacencyListOut[arc] = new TIntArrayList();
                     graph.adjacencyListOut[arc].add(i);
 
@@ -133,19 +142,22 @@ public class SCC {
                 }
             t++;
             f[i] = t;
+            log.info("f("+i+")=" + t);
         }
-
 
 
         private void dfsLeader(GraphSCC graph, int i) {
             graph.vertexVisit.set(i);//mark i explored
             leader++;
+            log.info("leader(" + i + ")=" + leader + " s=" + s);
             TIntArrayList arcs = graph.adjacencyListIn[i];
-            if (arcs != null)
-            for (int j = 0; j < arcs.size(); j++) {
-                if (!graph.vertexVisit.get(arcs.get(j))) {
-                    int arc = arcs.removeAt(j);
-                    dfsLeader(graph, arc);
+            arcs.sort();
+            if (arcs != null) {
+                for (int j = 0; j < arcs.size(); j++) {
+                    int arc = arcs.get(j);
+                    if (!graph.vertexVisit.get(arc)) {
+                        dfsLeader(graph, arc);
+                    }
                 }
             }
         }
