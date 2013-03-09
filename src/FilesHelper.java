@@ -123,4 +123,41 @@ public class FilesHelper {
         }
         return graph;
     }
+
+
+    static DijkstraShortestPath.MinHeap readDijkstraGraphFromFile(String filePath, int arraySize) {
+        Charset charset = Charset.forName("UTF-8");
+        Path path = Paths.get(filePath);
+        DijkstraShortestPath.Vertex v ;
+        DijkstraShortestPath.MinHeap minHeap= new DijkstraShortestPath.MinHeap(arraySize);
+        try (BufferedReader reader = Files.newBufferedReader(path, charset)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] strLine = line.split("\\s+");
+                int vertexNum = Integer.parseInt(strLine[0]);
+                if(minHeap.graph[vertexNum] == null) {
+                    minHeap.graph[vertexNum] = v = new DijkstraShortestPath.Vertex(vertexNum);
+                }else{
+                    v = minHeap.graph[vertexNum];
+                }
+                for (int i=1;i<strLine.length;i++){
+                    String[] vertexNumLen = strLine[i].split(",");
+                    int vv = Integer.parseInt(vertexNumLen[0]);
+                    DijkstraShortestPath.Vertex head;
+                    if(minHeap.graph[vv] == null) {
+                        minHeap.graph[vv] = head = new DijkstraShortestPath.Vertex(vv);
+                    }else{
+                        head = minHeap.graph[vv];
+                    }
+                    int len = Integer.parseInt(vertexNumLen[1]);
+                    DijkstraShortestPath.Edge e = new DijkstraShortestPath.Edge(v,head,len);
+                    v.adjacencyList.add(e);
+                }
+            }
+            reader.close();
+        } catch (IOException x) {
+            log.severe("IOException:" + x.getMessage());
+        }
+        return minHeap;
+    }
 }
