@@ -74,6 +74,7 @@ public class DijkstraShortestPath {
             resArray[i] = dijkstraShortestPath.run(minHeap, 1, destArray[i]);
         }
         System.out.println(Arrays.toString(resArray));
+        Assert.assertEquals(Arrays.toString(new int[]{2599, 2610, 2947, 2052, 2367, 2399, 2029, 2442, 2505, 3068}), Arrays.toString(resArray));
     }
 
     private int run(DijkstraShortestPath.MinHeap minHeap, int source, int destination) {
