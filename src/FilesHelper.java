@@ -69,6 +69,33 @@ public class FilesHelper {
         return result;
     }
 
+    static int[] readIntRangeArrayFromFile(String filePath, int arraySize, int startRange, int endRange) {
+        Charset charset = Charset.forName("UTF-8");
+        Path path = Paths.get(filePath);
+        int result[] = new int[arraySize];
+        int result2[] = null;
+        int idx = 0;
+        try (BufferedReader reader = Files.newBufferedReader(path, charset)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                int n = Integer.parseInt(line);
+                if (n <= endRange)
+                    result[idx++] = Integer.parseInt(line);
+            }
+
+            reader.close();
+            result2 = new int[idx];
+
+            for(int i=0;i<idx;i++){
+                result2[i] = result[i];
+            }
+            return result2;
+        } catch (IOException x) {
+            log.severe("IOException:" + x.getMessage());
+        }
+        return result2;
+    }
+
     static Graph readGraphFromFile(String filePath, int arraySize) {
         Charset charset = Charset.forName("UTF-8");
         Path path = Paths.get(filePath);
@@ -106,7 +133,7 @@ public class FilesHelper {
             while ((line = reader.readLine()) != null) {
                 String[] strNumber = line.split("\\s+");
                 int head = Integer.parseInt(strNumber[0]) - 1;
-                if(curVertex != head){
+                if (curVertex != head) {
                     graph.adjacencyListIn[curVertex] = tails;
 //                    graph.adjacencyListOut[curVertex] = tailsRev;
                     tails = new TIntArrayList();
@@ -128,29 +155,29 @@ public class FilesHelper {
     static DijkstraShortestPath.MinHeap readDijkstraGraphFromFile(String filePath, int arraySize) {
         Charset charset = Charset.forName("UTF-8");
         Path path = Paths.get(filePath);
-        DijkstraShortestPath.Vertex v ;
-        DijkstraShortestPath.MinHeap minHeap= new DijkstraShortestPath.MinHeap(arraySize);
+        DijkstraShortestPath.Vertex v;
+        DijkstraShortestPath.MinHeap minHeap = new DijkstraShortestPath.MinHeap(arraySize);
         try (BufferedReader reader = Files.newBufferedReader(path, charset)) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] strLine = line.split("\\s+");
                 int vertexNum = Integer.parseInt(strLine[0]);
-                if(minHeap.graph[vertexNum] == null) {
+                if (minHeap.graph[vertexNum] == null) {
                     minHeap.graph[vertexNum] = v = new DijkstraShortestPath.Vertex(vertexNum);
-                }else{
+                } else {
                     v = minHeap.graph[vertexNum];
                 }
-                for (int i=1;i<strLine.length;i++){
+                for (int i = 1; i < strLine.length; i++) {
                     String[] vertexNumLen = strLine[i].split(",");
                     int vv = Integer.parseInt(vertexNumLen[0]);
                     DijkstraShortestPath.Vertex head;
-                    if(minHeap.graph[vv] == null) {
+                    if (minHeap.graph[vv] == null) {
                         minHeap.graph[vv] = head = new DijkstraShortestPath.Vertex(vv);
-                    }else{
+                    } else {
                         head = minHeap.graph[vv];
                     }
                     int len = Integer.parseInt(vertexNumLen[1]);
-                    DijkstraShortestPath.Edge e = new DijkstraShortestPath.Edge(v,head,len);
+                    DijkstraShortestPath.Edge e = new DijkstraShortestPath.Edge(v, head, len);
                     v.adjacencyList.add(e);
                 }
             }
