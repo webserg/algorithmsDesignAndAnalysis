@@ -46,7 +46,7 @@ public class MergeSortInversionsCount {
 
     private static void merge(int fl, int ll, int fr, int lr) {
         int[] temp = new int[source.length];
-        int tmp_idx = fl;
+        int tmp_idx = 0;
         int saveF = fl;
         while (fl <= ll && fr <= lr) {
             if (source[fl] < source[fr]) {
