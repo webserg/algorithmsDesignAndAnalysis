@@ -14,8 +14,8 @@ public class MergeSort {
 
         mergeSort(new int[]{12, 66, 8, 45});
         Assert.assertArrayEquals(new int[]{8, 12, 45, 66}, source);
-        mergeSort(new int[]{12, 66, 8, 45,0});
-        Assert.assertArrayEquals(new int[]{0,8, 12, 45, 66}, source);
+//        mergeSort(new int[]{12, 66, 8, 45, 0});
+//        Assert.assertArrayEquals(new int[]{0, 8, 12, 45, 66}, source);
     }
 
     public void mergeSort(int[] s) throws Exception {
@@ -31,26 +31,24 @@ public class MergeSort {
             int mid = (first + last) >>> 1;
             split(first, mid);
             split(mid + 1, last);
-            merge(first, mid, mid + 1, last);
+            merge(first, mid + 1, last);
         }
     }
 
-    private void merge(final int first, final int mid, final int mid2, final int last) {
-        int[] temp = new int[first + last + 1];
+    private void merge(final int first, final int mid2, final int last) {
+        int[] temp = new int[last - first + 1];
         int l = first;
         int r = mid2;
-        int tmpIdx = 0;
-        while (l <= mid && r <= last) {
+        int i=0;
+        for (;l < mid2 && r <= last; i++) {
             if (source[l] < source[r]) {
-                temp[tmpIdx++] = source[l];
-                l++;
+                temp[i] = source[l++];
             } else {
-                temp[tmpIdx++] = source[r];
-                r++;
+                temp[i] = source[r++];
             }
         }
-        while (l <= mid) temp[tmpIdx++] = source[l++];
-        while (r <= last) temp[tmpIdx++] = source[r++];
+        while (l < mid2) temp[i++] = source[l++];
+        while (r <= last) temp[i++] = source[r++];
         System.arraycopy(temp, 0, source, first, last - first + 1);
     }
 }
