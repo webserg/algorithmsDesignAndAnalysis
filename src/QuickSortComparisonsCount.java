@@ -12,7 +12,21 @@ import static org.junit.Assert.assertTrue;
  */
 public class QuickSortComparisonsCount {
     long comparison = 0;
-    boolean debug = false;
+    boolean debug = true;
+
+    @Test
+    public void testSortSimle() throws Exception {
+        System.out.println("start...");
+        if (debug) {
+            int result[] = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9};
+            int[] source = new int[]{1, 9, 8, 7, 6, 5, 4, 3, 2};
+            assertFalse(Arrays.equals(result, source));
+            System.out.println(Arrays.toString(source));
+            quickSort(source, 0, source.length - 1);
+            System.out.println(Arrays.toString(source));
+            assertTrue(Arrays.equals(result, source));
+        }
+    }
 
     @Test
     public void testSort() throws Exception {
@@ -68,6 +82,11 @@ public class QuickSortComparisonsCount {
         assertEquals(5,source[med]);
     }
 
+    /**
+     * @param a array
+     * @param str first index
+     * @param l last index
+     */
     private void quickSort(int a[], int str, int l) {
         if ((l - str) <= 0) return;
         comparison += l - str;

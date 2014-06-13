@@ -2,6 +2,7 @@ import java.util.Arrays;
 
 /**
  * Created by webserg on 02.06.2014.
+ *
  */
 public class MatrixMultiplication {
     static int N = 2;

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,6 +12,7 @@ public class Graph {
     private int N;
     List<Integer>[] adjacencyList;
     List<Integer> vertexRange;
+    BitSet vertexVisit;
     private static Logger log = Logger.getLogger(Graph.class.getName());
 
     {
@@ -21,6 +23,7 @@ public class Graph {
         N = n;
         adjacencyList = (ArrayList<Integer>[]) new ArrayList[N];
         vertexRange = new ArrayList<>(N);
+        vertexVisit = new BitSet(N);
     }
 
     public int getN() {
