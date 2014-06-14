@@ -5,6 +5,7 @@ import java.util.Queue;
 
 /**
  * Created by webserg on 13.06.2014.
+ *
  */
 public class BFS {
     public static void main(String[] args) {
