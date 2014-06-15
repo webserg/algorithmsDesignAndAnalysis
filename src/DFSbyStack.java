@@ -6,36 +6,36 @@ import java.util.logging.Logger;
  * Created by webserg on 13.06.2014.
  * bfs search
  */
-public class BFS {
+public class DFSbyStack {
+
     public static void main(String[] args) {
         int N = 6;
-        BFS bfs = new BFS();
-        Graph graph = bfs.initGraph(N);
-        bfs.bfs(graph);
+        DFSbyStack dfs = new DFSbyStack();
+        Graph graph = dfs.initGraph(N);
+        dfs.dfs(graph);
         for (Vertex v : graph.vertexVisit) {
             System.out.print("vertex " + v + " was visited");
-            System.out.println("  path from Vertex{s} to " + v + " is " + graph.distance.get(v));
+            System.out.println();
         }
     }
 
+    private Vertex getVertexByName(String name) {
+        return new Vertex(name);
+    }
 
-    private void bfs(Graph graph) {
-        Queue<Vertex> queue = new LinkedList<>();
-        queue.offer(new Vertex("s"));
-        while (!queue.isEmpty()) {
-            Vertex s = queue.poll();
-            Integer ds = graph.distance.get(s);
-            if (ds == null) ds = 0;
+
+    private void dfs(Graph graph) {
+        graph.stack.put(getVertexByName("s"));
+        while (!graph.stack.isEmpty()) {
+            Vertex s = graph.stack.take();
+            if (!graph.vertexVisit.contains(s))
+                graph.vertexVisit.add(s);
             List<Vertex> vertex = graph.adjacencyList.get(s);
             for (Vertex v : vertex) {
                 if (!graph.vertexVisit.contains(v)) {
-                    queue.offer(v);
-                    if(graph.distance.get(v) == null)//we are looking for short path
-                        graph.distance.put(v, ds + 1);
+                    graph.stack.put(v);
                 }
             }
-            if (!graph.vertexVisit.contains(s))
-                graph.vertexVisit.add(s);
         }
     }
 
@@ -67,10 +67,10 @@ public class BFS {
 
     class Graph {
         private int N;
+        Stack<Vertex> stack = new Stack<>(new LinkedList<Vertex>());
         Map<Vertex, List<Vertex>> adjacencyList;
         List<Vertex> vertexRange;
         List<Vertex> vertexVisit;
-        Map<Vertex, Integer> distance;
         private Logger log = Logger.getLogger(Graph.class.getName());
 
         {
@@ -81,7 +81,6 @@ public class BFS {
             N = n;
             adjacencyList = new HashMap<>();
             vertexRange = new ArrayList<>(N);
-            distance = new HashMap<>(N);
             vertexVisit = new ArrayList<>(N);
         }
 
@@ -128,5 +127,7 @@ public class BFS {
             return "Vertex{" + name + '}';
         }
     }
+
+
 }
 

@@ -16,7 +16,6 @@ public class DFS {
         for (Vertex v : graph.vertexVisit) {
             System.out.print("vertex " + v + " was visited");
             System.out.println();
-//            System.out.println("  path from Vertex{s} to " + v + " is " + graph.distance.get(v));
         }
     }
 
@@ -33,23 +32,6 @@ public class DFS {
                 dfs(graph, v);
             }
         }
-//        Queue<Vertex> queue = new LinkedList<>();
-//        queue.offer(new Vertex("s"));
-//        while (!queue.isEmpty()) {
-//            Vertex s = queue.poll();
-//            Integer ds = graph.distance.get(s);
-//            if (ds == null) ds = 0;
-//            List<Vertex> vertex = graph.adjacencyList.get(s);
-//            for (Vertex v : vertex) {
-//                if (!graph.vertexVisit.contains(v)) {
-//                    queue.offer(v);
-//                    if(graph.distance.get(v) == null)//we are looking for short path
-//                        graph.distance.put(v, ds + 1);
-//                }
-//            }
-//            if (!graph.vertexVisit.contains(s))
-//                graph.vertexVisit.add(s);
-//        }
     }
 
     private Graph initGraph(int n) {
