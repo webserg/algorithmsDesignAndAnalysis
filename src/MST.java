@@ -36,53 +36,38 @@ public class MST {
         }
         HashSet<Edge> tree = new HashSet<>();
         List<Vertex> x = new ArrayList(graph.vertexes.size());
+        int cost = 0 ;
         while (x.size() == graph.vertexes.size()) {
             Edge min;
             min = priorityQueue.poll();
+            if (min == null) return Integer.MAX_VALUE;//no way
             tree.add(min);
+            cost+=min.getLength();
             cur = min.head;
             List<Edge> adj = cur.adjacencyList;
             for (Edge edge : adj) {
                 Vertex v = edge.head;
-                int newScore = edge.length + cur.score;
-                if(!tree.contains(v))
-                    addIdScoreLess(priorityQueue, edge, newScore);
-//                priorityQueue.offer(v);
+                if (!tree.contains(v)) {
+                    priorityQueue.offer(edge);
+                }
             }
             cur.adjacencyList = new ArrayList<>();
         }
         return cur.score;
     }
 
-    private boolean addIdScoreLess(PriorityQueue<Edge> priorityQueue, Edge e, int newScore) {
-        Edge oldEdge = null;
-        for (Edge c : priorityQueue) {
-            if (c.equals(e)) {
-                oldEdge = c;
-                break;
-            }
-        }
-        if (oldEdge == null) {
-            e.head.score = newScore;
-            priorityQueue.offer(e);
-        } else if (oldEdge.head.score > newScore) {
-            oldEdge.head.score = newScore;
-        }
-        return true;
-    }
-
     class EdgeComparator implements Comparator<Edge> {
         @Override
         public int compare(Edge e1, Edge e2) {
-            return e1.head.score < e2.head.score ? -1 : e1.head.score > e2.head.score ? 1 : 0;
+            return e1.length < e2.length ? -1 : e1.length > e2.length ? 1 : 0;
         }
     }
 
     static class Graph {
-        Map<Vertex,Vertex> vertexes;
+        Map<Vertex, Vertex> vertexes;
         Edge[] edges;
 
-        Graph(Map<Vertex,Vertex> vertexes, Edge[] edges) {
+        Graph(Map<Vertex, Vertex> vertexes, Edge[] edges) {
             this.vertexes = vertexes;
             this.edges = edges;
         }
@@ -159,7 +144,7 @@ public class MST {
     static Graph readGraphFromFile(String filePath) {
         Charset charset = Charset.forName("UTF-8");
         Path path = Paths.get(filePath);
-        Map<Vertex,Vertex> vertexes = null;
+        Map<Vertex, Vertex> vertexes = null;
         Edge[] edges = null;
         try (BufferedReader reader = Files.newBufferedReader(path, charset)) {
             String line = reader.readLine();
@@ -175,8 +160,8 @@ public class MST {
                 Vertex tail = new Vertex(Integer.parseInt(strLine[0]));
                 Vertex head = new Vertex(Integer.parseInt(strLine[2]));
                 int cost = Integer.parseInt(strLine[3]);
-                if(!vertexes.containsKey(tail))
-                vertexes.put(tail,tail);
+                if (!vertexes.containsKey(tail))
+                    vertexes.put(tail, tail);
                 tail = vertexes.get(tail);
                 Edge edge = new Edge(tail, head, cost);
                 edges[j++] = edge;
