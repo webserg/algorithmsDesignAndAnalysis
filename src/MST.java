@@ -16,14 +16,9 @@ public class MST {
 
     @Test
     public void testDijkstraShortestPath1() throws Exception {
-
-        int[] resArray = new int[5];
-        int[] destArray = new int[]{1, 2, 3, 4, 5};
-        for (int i = 0; i < destArray.length; i++) {
-            Graph graph = readGraphFromFile("resource/DijkstraTest1.txt");
-            resArray[i] = run(graph, 1);
-        }
-        Assert.assertEquals(Arrays.toString(new int[]{0, 10, 50, 30, 60}), Arrays.toString(resArray));
+        Graph graph = readGraphFromFile("resource/edges.txt");
+        int res = run(graph, 1);
+        System.out.println();
     }
 
 
