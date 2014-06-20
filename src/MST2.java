@@ -12,7 +12,7 @@ import java.util.*;
 /**
  * Created by webserg on 17.06.2014.
  */
-public class MST {
+public class MST2 {
 
     @Test
     public void test() throws Exception {
@@ -27,12 +27,12 @@ public class MST {
         Assert.assertEquals(-13, res);
     }
 
-    @Test
-    public void testMST11() throws Exception {
-        Graph graph = readGraphFromFile("resource/edges_big.txt");
-        long res = run(graph, 1);
-        Assert.assertEquals(-469973073, res);
-    }
+//    @Test
+//    public void testMST11() throws Exception {
+//        Graph graph = readGraphFromFile("resource/edges_big.txt");
+//        long res = run(graph, 1);
+//        Assert.assertEquals(-469973073, res);
+//    }
 
     @Test
     public void testMST2() throws Exception {
@@ -48,33 +48,42 @@ public class MST {
         Assert.assertEquals(105, res);
     }
 
+    @Test
+    public void testMST4() throws Exception {
+        Graph graph = readGraphFromFile("resource/edgesTest4.txt");
+        long res = run(graph, 1);
+        Assert.assertEquals(-1, res);
+    }
+
 
     private Long run(Graph graph, int source) {
         PriorityQueue<Edge> priorityQueue = new PriorityQueue<>(graph.vertexes.size(), new EdgeComparator());
         Vertex cur = graph.vertexes.get(new Vertex(source));
-        for (Edge edge : cur.adjacencyList) {
+        for (Edge edge : graph.edges) {
             priorityQueue.offer(edge);
         }
         Set<Edge> tree = new HashSet<>();
         List<Vertex> x = new ArrayList<>(graph.vertexes.size());
         x.add(cur);
-        Long cost = 0l ;
-        while (graph.vertexes.size() != x.size()) {
+        Long cost = 0l;
+        while (!x.containsAll(graph.vertexes.keySet())) {
             Edge min;
-            min = priorityQueue.poll();
-            if (min == null) return Long.MAX_VALUE;//no way
-            tree.add(min);
-            cost += min.getLength();
-            cur = min.head;
-            x.add(cur);
-            List<Edge> adj = cur.adjacencyList;
-            for (Edge edge : adj) {
-                Vertex v = edge.head;
-                if (!x.contains(v)) {
-                    priorityQueue.offer(edge);
+            boolean notfound = true;
+            List<Edge> notGood = new ArrayList<>();
+            do {
+                min = priorityQueue.peek();
+                if (min == null) return Long.MAX_VALUE;//no way
+                if (x.contains(min.getTail()) && !x.contains(min.head)) {
+                    tree.add(min);
+                    cost += min.getLength();
+                    cur = min.head;
+                    x.add(cur);
+                    notfound = false;
+                } else {
+                    notGood.add(min);
                 }
-            }
-            cur.adjacencyList = new ArrayList<>();
+            } while (notfound);
+            priorityQueue.addAll(notGood);
         }
         return cost;
     }

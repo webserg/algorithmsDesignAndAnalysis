@@ -1,5 +1,9 @@
+import junit.framework.Assert;
+import org.junit.Test;
+
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,20 +23,62 @@ public class MinWeightedSumOfComplTimes {
         log.setLevel(Level.SEVERE);
     }
 
-
-    public static void main(String[] args) {
+    @Test
+    public void test1() throws Exception {
         MinWeightedSumOfComplTimes system = new MinWeightedSumOfComplTimes();
-        List<Job> jobs = Arrays.asList(system.readJobsFromFile("resource/jobs.txt"));
-        log.severe(system.runSum(jobs) + "");
+        List<Job> jobs = new ArrayList<>();
+        CountScoreStategy scoreStategy = new CountScoreStrategyDifference();
+        jobs.add(new Job(3,5,scoreStategy));
+        jobs.add(new Job(1,2,scoreStategy));
+        Assert.assertEquals(system.runSum(jobs),23);
     }
 
-    public int runSum(List<Job> jobs) {
+    @Test
+    public void test2() throws Exception {
+        MinWeightedSumOfComplTimes system = new MinWeightedSumOfComplTimes();
+        List<Job> jobs = new ArrayList<>();
+        CountScoreStategy scoreStategy = new CountScoreStrategyRatio();
+        jobs.add(new Job(3,5,scoreStategy));
+        jobs.add(new Job(1,2,scoreStategy));
+        Assert.assertEquals(system.runSum(jobs),22);
+    }
+
+
+    @Test
+    public void test3() throws Exception {
+        MinWeightedSumOfComplTimes system = new MinWeightedSumOfComplTimes();
+        List<Job> jobs = Arrays.asList(system.readJobsFromFile("resource/jobsTest1.txt",new CountScoreStrategyDifference()));
+        Assert.assertEquals(21701,system.runSum(jobs));
+    }
+
+    @Test
+    public void test4() throws Exception {
+        MinWeightedSumOfComplTimes system = new MinWeightedSumOfComplTimes();
+        List<Job> jobs = Arrays.asList(system.readJobsFromFile("resource/jobsTest1.txt",new CountScoreStrategyRatio()));
+        Assert.assertEquals(21025,system.runSum(jobs));
+    }
+
+    @Test
+    public void test() throws Exception {
+        MinWeightedSumOfComplTimes system = new MinWeightedSumOfComplTimes();
+        List<Job> jobs = Arrays.asList(system.readJobsFromFile("resource/jobs.txt",new CountScoreStrategyDifference()));
+        System.out.printf("%d",system.runSum(jobs));
+    }
+
+    @Test
+    public void testRation() throws Exception {
+        MinWeightedSumOfComplTimes system = new MinWeightedSumOfComplTimes();
+        List<Job> jobs = Arrays.asList(system.readJobsFromFile("resource/jobs.txt",new CountScoreStrategyRatio()));
+        System.out.printf("%d",system.runSum(jobs));
+    }
+
+    public long runSum(List<Job> jobs) {
         int N = jobs.size();
         PriorityQueue<Job> heap = new PriorityQueue<>(N, new JobComparator());
         heap.addAll(jobs);
-        int sum = 0;
-        int complitionTime = 0;
-        while (heap.isEmpty()) {
+        long sum = 0;
+        long complitionTime = 0;
+        while (!heap.isEmpty()) {
             Job cur = heap.poll();
             complitionTime += cur.getLength();
             sum += complitionTime * cur.getWeight();
@@ -40,31 +86,46 @@ public class MinWeightedSumOfComplTimes {
         return sum;
     }
 
+    interface CountScoreStategy{
+        Double countScore(long w,long l);
+    }
+
+    class CountScoreStrategyDifference implements CountScoreStategy {
+        @Override
+        public Double countScore(long w,long l) {
+            return (double)w - l;
+        }
+    }
+
+    class CountScoreStrategyRatio implements CountScoreStategy {
+        @Override
+        public Double countScore(long w,long l) {
+            return (double)w/l;
+        }
+    }
+
 
     class Job {
-        private final int weight;
-        private final int length;
-        private final int score;
+        private final long weight;
+        private final long length;
+        private final Double score;
 
-        Job(int weight, int length) {
+        Job(int weight, int length, CountScoreStategy countScoreStategy) {
             this.weight = weight;
             this.length = length;
-            this.score = countScore();
+            this.score = countScoreStategy.countScore(this.weight,this.length);
         }
 
-        private int countScore() {
-            return weight - length;
-        }
 
-        public int getWeight() {
+        public long getWeight() {
             return weight;
         }
 
-        public int getLength() {
+        public long getLength() {
             return length;
         }
 
-        public int getScore() {
+        public Double getScore() {
             return score;
         }
 
@@ -83,8 +144,8 @@ public class MinWeightedSumOfComplTimes {
 
         @Override
         public int hashCode() {
-            int result = weight;
-            result = 31 * result + length;
+            int result = (int) (weight ^ (weight >>> 32));
+            result = 31 * result + (int) (length ^ (length >>> 32));
             return result;
         }
     }
@@ -96,7 +157,7 @@ public class MinWeightedSumOfComplTimes {
         }
     }
 
-    Job[] readJobsFromFile(String filePath) {
+    Job[] readJobsFromFile(String filePath,CountScoreStategy stategy) {
         Charset charset = Charset.forName("UTF-8");
         Path path = Paths.get(filePath);
 
@@ -110,7 +171,7 @@ public class MinWeightedSumOfComplTimes {
                 String[] strNumber = line.split("\\s+");
                 int weight = Integer.parseInt(strNumber[0]);
                 int length = Integer.parseInt(strNumber[1]);
-                jobs[idx++] = new MinWeightedSumOfComplTimes.Job(weight, length);
+                jobs[idx++] = new MinWeightedSumOfComplTimes.Job(weight, length,stategy);
             }
         } catch (IOException x) {
             log.severe("IOException:" + x.getMessage());
