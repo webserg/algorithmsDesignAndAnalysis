@@ -23,56 +23,59 @@ import java.nio.file.Paths;
  * shortest shortest paths in the box below.
  */
 public class AllPairsShortestPath {
+    static final int INFINITY = Integer.MAX_VALUE;
+
     @Test
     public void testMST1() throws Exception {
-        long[][] D = readGraphFromFile("resource/g0.txt");
+        int[][][] D = readGraphFromFile("resource/g0.txt");
         int res = run(D);
         Assert.assertEquals(5, res);
     }
 
     @Test
     public void testMST2() throws Exception {
-        long[][] D = readGraphFromFile("resource/g1.txt");
+        int[][][] D = readGraphFromFile("resource/g1.txt");
         int res = run(D);
         Assert.assertEquals(-1, res);
     }
 
     @Test
     public void testMST3() throws Exception {
-        long[][] D = readGraphFromFile("resource/g2.txt");
+        int[][][] D = readGraphFromFile("resource/g2.txt");
         int res = run(D);
         Assert.assertEquals(-1, res);
     }
 
     @Test
     public void testMST4() throws Exception {
-        long[][] D = readGraphFromFile("resource/g3.txt");
+        int[][][] D = readGraphFromFile("resource/g3.txt");
         int res = run(D);
         Assert.assertEquals(-1, res);
     }
 
-    int run(long[][] D) {
+    int run(int[][][] D) {
         int N = D.length;
         int res = N + 1;
         int[][] B = new int[N][N];
-        for (int k = 1; k < N; k++)
+        int kk=1;
+        for (int k = 1; k < N; k++) {
             for (int i = 1; i < N; i++)
                 for (int j = 1; j < N; j++) {
-                    long newW;
-                    if (D[i][k] == Long.MAX_VALUE || D[k][j] == Long.MAX_VALUE) {
-                        newW = Long.MAX_VALUE;
+                    int newW;
+                    if (D[i][k][kk - 1] == INFINITY || D[k][j][kk - 1] == INFINITY) {
+                        newW = INFINITY;
                     } else {
-                        newW = D[i][k] + D[k][j];
+                        newW = D[i][k][kk - 1] + D[k][j][kk - 1];
                     }
-                    if (D[i][j] > newW) {
-                        D[i][j] = newW;
+                    if (D[i][j][kk] > newW) {
+                        D[i][j][kk] = newW;
                         B[i][j] = k;
                     }
-
                 }
+        }
         for (int i = 1; i < N; i++)
             for (int j = 1; j < N; j++) {
-                if (D[i][j] < 0) {
+                if (D[i][j][N - 1] < 0) {
                     System.out.println("negative cycle");
                     return -1;
                 }
@@ -82,33 +85,35 @@ public class AllPairsShortestPath {
         return res;
     }
 
-    static long[][] readGraphFromFile(String filePath) {
+    static int[][][] readGraphFromFile(String filePath) {
         Charset charset = Charset.forName("UTF-8");
         Path path = Paths.get(filePath);
-        long[][] graph = null;
+        int[][][] graph = null;
+        int k = 0;
         try (BufferedReader reader = Files.newBufferedReader(path, charset)) {
             String line = reader.readLine();
             String[] strLine = line.split("\\s+");
             int vertexNum = Integer.parseInt(strLine[0]);
             int edgesNum = Integer.parseInt(strLine[1]);
-            graph = new long[vertexNum + 1][vertexNum + 1];
+            graph = new int[vertexNum + 1][vertexNum + 1][2];
             int i, j;
-            long w;
+            int w;
+
             while ((line = reader.readLine()) != null) {
                 strLine = line.split("\\s+");
                 i = Integer.parseInt(strLine[0]);
                 j = Integer.parseInt(strLine[1]);
                 w = Integer.parseInt(strLine[2]);
-                graph[i][j] = w;
+                graph[i][j][k] = w;
             }
         } catch (IOException x) {
             System.out.println("IOException:" + x.getMessage());
         }
-        long infin = Long.MAX_VALUE;
+
         for (int i = 1; i < graph.length; i++)
             for (int j = 1; j < graph.length; j++) {
-                if (i != j && graph[i][j] == 0) {
-                    graph[i][j] = infin;
+                if (i != j && graph[i][j][k] == 0) {
+                    graph[i][j][k] = INFINITY;
                 }
             }
         return graph;
