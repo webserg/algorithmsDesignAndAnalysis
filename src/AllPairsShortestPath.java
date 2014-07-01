@@ -26,68 +26,68 @@ public class AllPairsShortestPath {
     static final int INFINITY = Integer.MAX_VALUE;
 
     @Test
-    public void testMST1() throws Exception {
+    public void testAPSP1() throws Exception {
         long res = run(readGraphFromFile("resource/g0.txt"));
-        Assert.assertEquals(0, res);
+        Assert.assertEquals(1, res);
     }
 
     @Test
-    public void testMSTgTest1() throws Exception {
+    public void testAPSPgTest1() throws Exception {
         long res = run(readGraphFromFile("resource/gTest1.txt"));
         Assert.assertEquals(-6, res);
     }
 
     @Test
-    public void testMSTgTest2() throws Exception {
+    public void testAPSPgTest2() throws Exception {
         long res = run(readGraphFromFile("resource/gTest2.txt"));
         Assert.assertEquals(-7, res);
     }
 
     @Test
-    public void testMSTgTest3() throws Exception {
+    public void testAPSPgTest3() throws Exception {
         long res = run(readGraphFromFile("resource/gTest3.txt"));
-        Assert.assertEquals(Long.MIN_VALUE, res);
+        Assert.assertEquals(Integer.MIN_VALUE, res);
     }
 
     @Test
-    public void testMSTgTest4() throws Exception {
+    public void testAPSPgTest4() throws Exception {
         long res = run(readGraphFromFile("resource/gTest4.txt"));
         Assert.assertEquals(-8, res);
     }
 
     @Test
-    public void testMSTgTest5() throws Exception {
+    public void testAPSPgTest5() throws Exception {
         long res = run(readGraphFromFile("resource/gTest5.txt"));
         Assert.assertEquals(-3, res);
     }
 
     @Test
-    public void testMSTgTest6() throws Exception {
+    public void testAPSPgTest6() throws Exception {
         long res = run(readGraphFromFile("resource/gTest6.txt"));
         Assert.assertEquals(3, res);
     }
 
     @Test
-    public void testMST2() throws Exception {
+    public void testAPSP2() throws Exception {
         long res = run(readGraphFromFile("resource/g1.txt"));
-        Assert.assertEquals(Long.MIN_VALUE, res);
+        Assert.assertEquals(Integer.MIN_VALUE, res);
     }
 
     @Test
-    public void testMST3() throws Exception {
+    public void testAPSP3() throws Exception {
         long res = run(readGraphFromFile("resource/g2.txt"));
-        Assert.assertEquals(Long.MIN_VALUE, res);
+        Assert.assertEquals(Integer.MIN_VALUE, res);
     }
 
     @Test
-    public void testMST4() throws Exception {
+    public void testAPSP4() throws Exception {
         long res = run(readGraphFromFile("resource/g3.txt"));
         Assert.assertEquals(-1, res);
     }
 
     @Test
-    public void testMSTLarge() throws Exception {
-        long res = run(readGraphFromFile("resource/large.txt"));
+    public void testAPSPLarge() throws Exception {
+        long res = run(readGraphFromFile("resource/large.txt"));//not solved out of memory, looks like need another algorithm
         Assert.assertEquals(-6, res);
     }
 
@@ -95,7 +95,7 @@ public class AllPairsShortestPath {
         final int N = D[0].length;
         int res = INFINITY;
         int[][] B = new int[N][N];
-        int kk = 1;
+        int kk = 1; // need only two arrays current k, and prev k-1
         for (int k = 1; k < N; k++) {
             for (int i = 1; i < N; i++)
                 for (int j = 1; j < N; j++) {
@@ -114,18 +114,17 @@ public class AllPairsShortestPath {
                         D[kk][i][j] = D[kk - 1][i][j];
                     }
                 }
-            D[kk - 1] = D[kk];
-            D[kk] = new int[N][N];
+            D[kk - 1] = D[kk];//save current
+            D[kk] = new int[N][N];//prepare array for new values
         }
 
         for (int i = 1; i < N; i++) {
-            if (D[0][i][i] < 0) {
+            if (D[0][i][i] < 0) { //diagonal contains negative values, so we have negative cycle, not suitable for this algorithm abrupt
                 System.out.println("negative cycle");
                 return Integer.MIN_VALUE;
             }
             for (int j = 1; j < N; j++) {
-
-                if (i != j && res > D[0][i][j])
+                if (i != j && res > D[0][i][j]) // looking up for min
                     res = D[0][i][j];
             }
         }
@@ -137,7 +136,7 @@ public class AllPairsShortestPath {
         Path path = Paths.get(filePath);
         int[][][] graph = null;
         int k = 0;
-        int N = 0;
+        int N ;
         try (BufferedReader reader = Files.newBufferedReader(path, charset)) {
             String line = reader.readLine();
             String[] strLine = line.split("\\s+");
@@ -145,15 +144,15 @@ public class AllPairsShortestPath {
 
             int edgesNum = Integer.parseInt(strLine[1]);
             graph = new int[2][N + 1][N + 1];
-
+            //prepare default value
             for (int i = 1; i < N + 1; i++)
                 for (int j = 1; j < N + 1; j++) {
                     if (i != j) {
-                        graph[k][i][j] = INFINITY;
+                        graph[k][i][j] = INFINITY;//no way between this vertexes
                     }
                 }
-            int i, j;
-            int w;
+            int i, j;//idx of vertexes
+            int w;//weight
             while ((line = reader.readLine()) != null) {
                 strLine = line.split("\\s+");
                 i = Integer.parseInt(strLine[0]);
