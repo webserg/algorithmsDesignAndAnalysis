@@ -82,7 +82,7 @@ public class AllPairsShortestPath {
     @Test
     public void testAPSP4() throws Exception {
         long res = run(readGraphFromFile("resource/g3.txt"));
-        Assert.assertEquals(-1, res);
+        Assert.assertEquals(-19, res);
     }
 
     @Test
