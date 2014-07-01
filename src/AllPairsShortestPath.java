@@ -23,7 +23,7 @@ import java.nio.file.Paths;
  * shortest shortest paths in the box below.
  */
 public class AllPairsShortestPath {
-    static final long INFINITY = Long.MAX_VALUE;
+    static final int INFINITY = Integer.MAX_VALUE;
 
     @Test
     public void testMST1() throws Exception {
@@ -46,7 +46,7 @@ public class AllPairsShortestPath {
     @Test
     public void testMSTgTest3() throws Exception {
         long res = run(readGraphFromFile("resource/gTest3.txt"));
-        Assert.assertEquals(Integer.MIN_VALUE, res);
+        Assert.assertEquals(Long.MIN_VALUE, res);
     }
 
     @Test
@@ -85,17 +85,23 @@ public class AllPairsShortestPath {
         Assert.assertEquals(-1, res);
     }
 
-    long run(long[][][] D) {
+    @Test
+    public void testMSTLarge() throws Exception {
+        long res = run(readGraphFromFile("resource/large.txt"));
+        Assert.assertEquals(-6, res);
+    }
+
+    int run(int[][][] D) {
         final int N = D[0].length;
-        long res = INFINITY;
+        int res = INFINITY;
         int[][] B = new int[N][N];
         int kk = 1;
         for (int k = 1; k < N; k++) {
             for (int i = 1; i < N; i++)
                 for (int j = 1; j < N; j++) {
-                    long newW;
-                    long p1 = D[kk - 1][i][k];
-                    long p2 = D[kk - 1][k][j];
+                    int newW;
+                    int p1 = D[kk - 1][i][k];
+                    int p2 = D[kk - 1][k][j];
                     if (p1 == INFINITY || p2 == INFINITY) {
                         newW = INFINITY;
                     } else {
@@ -109,13 +115,13 @@ public class AllPairsShortestPath {
                     }
                 }
             D[kk - 1] = D[kk];
-            D[kk] = new long[N][N];
+            D[kk] = new int[N][N];
         }
 
         for (int i = 1; i < N; i++) {
             if (D[0][i][i] < 0) {
                 System.out.println("negative cycle");
-                return Long.MIN_VALUE;
+                return Integer.MIN_VALUE;
             }
             for (int j = 1; j < N; j++) {
 
@@ -126,10 +132,10 @@ public class AllPairsShortestPath {
         return res;
     }
 
-    static long[][][] readGraphFromFile(String filePath) {
+    static int[][][] readGraphFromFile(String filePath) {
         Charset charset = Charset.forName("UTF-8");
         Path path = Paths.get(filePath);
-        long[][][] graph = null;
+        int[][][] graph = null;
         int k = 0;
         int N = 0;
         try (BufferedReader reader = Files.newBufferedReader(path, charset)) {
@@ -138,27 +144,27 @@ public class AllPairsShortestPath {
             N = Integer.parseInt(strLine[0]);
 
             int edgesNum = Integer.parseInt(strLine[1]);
-            graph = new long[2][N + 1][N + 1];
-            int i, j;
-            long w;
+            graph = new int[2][N + 1][N + 1];
 
+            for (int i = 1; i < N + 1; i++)
+                for (int j = 1; j < N + 1; j++) {
+                    if (i != j) {
+                        graph[k][i][j] = INFINITY;
+                    }
+                }
+            int i, j;
+            int w;
             while ((line = reader.readLine()) != null) {
                 strLine = line.split("\\s+");
                 i = Integer.parseInt(strLine[0]);
                 j = Integer.parseInt(strLine[1]);
-                w = Long.parseLong(strLine[2]);
+                w = Integer.parseInt(strLine[2]);
                 graph[k][i][j] = w;
             }
         } catch (IOException x) {
             System.out.println("IOException:" + x.getMessage());
         }
 
-        for (int i = 1; i < N + 1; i++)
-            for (int j = 1; j < N + 1; j++) {
-                if (i != j && graph[k][i][j] == 0) {
-                    graph[k][i][j] = INFINITY;
-                }
-            }
         return graph;
     }
 
