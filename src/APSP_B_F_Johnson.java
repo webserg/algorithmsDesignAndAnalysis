@@ -27,7 +27,7 @@ public class APSP_B_F_Johnson {
         D[1] = 0;
         for (int k = 1; k < N; k++) {
             for (Edge edge : graph.edges) {
-                if ( D[edge.u] + edge.w < D[edge.v]) {
+                if ( D[edge.u] != INFINITY && D[edge.u] + edge.w < D[edge.v]) {
                     D[edge.v] = D[edge.u] + edge.w;
                     if (k == N - 1) {
                         System.out.println("negative cycle");
@@ -38,29 +38,47 @@ public class APSP_B_F_Johnson {
         }
 
 
-        return D[N-1];
+        return D[N - 1];
     }
 
     @Test
-    public void testAPSPgTest2() throws Exception {
-        Graph graph = readGraphFromFile("resource/gTest2.txt");
-        Assert.assertEquals(-7, run(graph));
-        System.out.println("");
+    public void testAPSP2() throws Exception {
+        long res = run(readGraphFromFile("resource/g1.txt"));
+        org.junit.Assert.assertEquals(MIN_INFINITY, res);
+    }
+
+    @Test
+    public void testAPSP3() throws Exception {
+        long res = run(readGraphFromFile("resource/g2.txt"));
+        org.junit.Assert.assertEquals(MIN_INFINITY, res);
+    }
+
+    @Test
+    public void testAPSPgTest3() throws Exception {
+        long res = run(readGraphFromFile("resource/gTest3.txt"));
+        org.junit.Assert.assertEquals(MIN_INFINITY, res);
     }
 
     @Test
     public void testBellmanFord() throws Exception {
         Graph graph = readGraphFromFile("resource/bellmanFordTest.txt");
-        Assert.assertEquals(7, run(graph));
+        Assert.assertEquals(6, run(graph));
         System.out.println("");
     }
 
-
+    /*
+    Vertex   Distance from Source
+    0                0
+    1                -1
+    2                2
+    3                -2
+    4                1
+    http://www.geeksforgeeks.org/dynamic-programming-set-23-bellman-ford-algorithm/
+     */
     @Test
     public void testBellmanFord2() throws Exception {
         Graph graph = readGraphFromFile("resource/bellmanFordTest2.txt");
-        Assert.assertEquals(7, run(graph));
-        System.out.println("");
+        Assert.assertEquals(1, run(graph));
     }
 
 
