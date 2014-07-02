@@ -7,6 +7,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 /**
  * Created by webserg on 02.07.2014.
@@ -17,52 +18,71 @@ public class APSP_B_F_Johnson {
     static final long INFINITY = Long.MAX_VALUE;
     static final long MIN_INFINITY = Long.MIN_VALUE;
 
-    long run(Graph graph) {
-        long res = INFINITY;
+    long runJohnson(Graph graph) {
+        return 0;
+    }
+
+    long[] runBellmanFordSingleSourcePath(Graph graph, int source) {
         int N = graph.vertexes.length;
         long[] D = new long[N];
         for (int i = 0; i < N; i++) {
             D[i] = INFINITY;
         }
-        D[1] = 0;
+        D[source] = 0;
         for (int k = 1; k < N; k++) {
             for (Edge edge : graph.edges) {
-                if ( D[edge.u] != INFINITY && D[edge.u] + edge.w < D[edge.v]) {
+                if (D[edge.u] != INFINITY && D[edge.u] + edge.w < D[edge.v]) {
                     D[edge.v] = D[edge.u] + edge.w;
                     if (k == N - 1) {
                         System.out.println("negative cycle");
-                        return MIN_INFINITY;
+                        D[N - 1] = MIN_INFINITY;
+                        return D;
                     }
                 }
             }
         }
 
 
-        return D[N - 1];
+        return D;
+    }
+
+    long[] weighting(Graph graph) {
+        int N = graph.vertexes.length;
+        long[] D = new long[N];
+        for (int i = 0; i < N; i++) {
+            D[i] = INFINITY;
+        }
+        int len = graph.edges.length;
+        graph.edges = Arrays.copyOf(graph.edges, len + graph.vertexes.length -1);
+        for (int i = 1; i < graph.vertexes.length; i++) {
+            graph.edges[len++] = new Edge(0, i, 0);
+        }
+
+        return runBellmanFordSingleSourcePath(graph,0);
     }
 
     @Test
     public void testAPSP2() throws Exception {
-        long res = run(readGraphFromFile("resource/g1.txt"));
-        org.junit.Assert.assertEquals(MIN_INFINITY, res);
+        long res[] = runBellmanFordSingleSourcePath(readGraphFromFile("resource/g1.txt"),1);
+        org.junit.Assert.assertEquals(MIN_INFINITY, res[res.length - 1]);
     }
 
     @Test
     public void testAPSP3() throws Exception {
-        long res = run(readGraphFromFile("resource/g2.txt"));
-        org.junit.Assert.assertEquals(MIN_INFINITY, res);
+        long res[] = runBellmanFordSingleSourcePath(readGraphFromFile("resource/g2.txt"),1);
+        org.junit.Assert.assertEquals(MIN_INFINITY, res[res.length - 1]);
     }
 
     @Test
     public void testAPSPgTest3() throws Exception {
-        long res = run(readGraphFromFile("resource/gTest3.txt"));
-        org.junit.Assert.assertEquals(MIN_INFINITY, res);
+        long res[] = runBellmanFordSingleSourcePath(readGraphFromFile("resource/gTest3.txt"),1);
+        org.junit.Assert.assertEquals(MIN_INFINITY, res[res.length - 1]);
     }
 
     @Test
     public void testBellmanFord() throws Exception {
-        Graph graph = readGraphFromFile("resource/bellmanFordTest.txt");
-        Assert.assertEquals(6, run(graph));
+        long res[] = runBellmanFordSingleSourcePath(readGraphFromFile("resource/bellmanFordTest.txt"),1);
+        Assert.assertEquals(6, res[res.length - 1]);
         System.out.println("");
     }
 
@@ -77,8 +97,8 @@ public class APSP_B_F_Johnson {
      */
     @Test
     public void testBellmanFord2() throws Exception {
-        Graph graph = readGraphFromFile("resource/bellmanFordTest2.txt");
-        Assert.assertEquals(1, run(graph));
+        long res[] = runBellmanFordSingleSourcePath(readGraphFromFile("resource/bellmanFordTest2.txt"),1);
+        Assert.assertEquals(1, res[res.length - 1]);
     }
 
 
