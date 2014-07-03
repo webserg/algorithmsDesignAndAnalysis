@@ -28,54 +28,50 @@ public class APSP_B_F_Johnson {
     long runJohnson(Graph graph) {
         long res = INFINITY;
 
-        long[] P = reWeighting(graph);
+        long P[] = mutatingGtoGM(graph);
         graph.edges = Arrays.copyOf(graph.edges, graph.m);
-        HashMap<Integer, List<Edge>> edgeMap = new HashMap<>();//adjacency list Vertex -> list of edges
-        for (Edge edge : graph.edges) {
-            edge.w = edge.w + P[edge.u] - P[edge.v]; // mutating to G'
-            if (edgeMap.containsKey(edge.u)) {
-                edgeMap.get(edge.u).add(edge);
-            } else {
-                List<Edge> list = new ArrayList<>();
-                list.add(edge);
-                edgeMap.put(edge.u, list);
+        int[] destArray = new int[graph.n];
+        for (int i = 0; i < graph.n; i++) {
+            destArray[i] = i + 1;
+        }
+        long[] resArray;
+        prepareAdjacencyListForDijkstra(graph);
+        for (int j = 1; j <= graph.n; j++) {
+            resArray = new long[graph.n];
+            int source = j;
+            int minDestIdx = runDijkstraForGivenSource(resArray, destArray, graph, source, P);
+            long curW = resArray[minDestIdx];
+            if (curW < res) res = curW;
+        }
+        return res;
+    }
+
+    private long runDijkstra(Graph graph, int source, int destination) {
+        PriorityQueue<Vertex> priorityQueue = new PriorityQueue<>(graph.n, new VertexComparator());
+        Vertex cur = graph.vertexes[source];
+        Vertex dest = graph.vertexes[destination];
+        for (Edge edge : cur.adjacencyList) {
+            Vertex v = graph.vertexes[edge.v];
+            v.score += edge.w;
+            priorityQueue.offer(v);
+        }
+        while (!cur.equals(dest)) {
+            Vertex min;
+            min = priorityQueue.poll();
+            if (min == null) return INFINITY-1000;//no way
+            cur = min;
+            if (!cur.visited) {
+                List<Edge> adj = cur.adjacencyList;
+                for (Edge edge : adj) {
+                    Vertex v = graph.vertexes[edge.v];
+                    long newScore = edge.w + cur.score;
+                    addIdScoreLess(priorityQueue, v, newScore);
+                }
+                cur.visited = true;
             }
         }
-        for (int i = 1; i <= graph.n; i++)
-            for (int j = 1; j <= graph.n; j++) {
 
-                if (i!=j) {
-                    for (int v = 1; v < graph.vertexes.length-1; v++) {
-                        graph.vertexes[v].score=0;
-                    }
-                    PriorityQueue<Vertex> priorityQueue = new PriorityQueue<>(graph.n, new VertexComparator());
-                    Vertex cur = graph.vertexes[i];
-                    Vertex dest = graph.vertexes[j];
-                    List<Edge> adjacencyList = edgeMap.get(cur.v);
-                    if (adjacencyList != null) {
-
-                        for (Edge edge : adjacencyList) {
-                            graph.vertexes[edge.v].score += edge.w;
-                            priorityQueue.offer(graph.vertexes[edge.v]);
-                        }
-                        Vertex min=null;
-                        for (int k = 1; k < graph.m; k++) {
-//                        while (!cur.equals(dest)) {
-                            min = priorityQueue.poll();
-                            if (min == null) break;//no way
-                            adjacencyList = edgeMap.get(min.v);
-                            if (adjacencyList != null) for (Edge edge : adjacencyList) {
-                                long newScore = edge.w + min.score;
-                                addIdScoreLess(priorityQueue, graph.vertexes[edge.v], newScore);
-                            }
-                        }
-                        long curW = min.score - P[i] + P[j];
-                        System.out.println(curW);
-                        if (curW < res) res = curW; // shortest shortes path
-                    }
-                }
-            }
-        return res;
+        return cur.score;
     }
 
     private boolean addIdScoreLess(PriorityQueue<Vertex> priorityQueue, Vertex v, long newScore) {
@@ -119,15 +115,20 @@ public class APSP_B_F_Johnson {
         return D;
     }
 
-
-    Graph mutatingGtoGM(Graph graph) {
+    /**
+     * @param graph
+     * @return reweighting array
+     */
+    long[] mutatingGtoGM(Graph graph) {
         long[] P = reWeighting(graph);
         graph.edges = Arrays.copyOf(graph.edges, graph.m);
         for (Edge edge : graph.edges) {
-            edge.w = edge.w + P[edge.u] - P[edge.v];
+            edge.w = edge.w + P[edge.u] - P[edge.v]; // mutating to G'
+            graph.vertexes[edge.u].adjacencyList.add(edge);
         }
-        return graph;
+        return P;
     }
+
 
     long[] reWeighting(Graph graph) {
         int N = graph.vertexes.length;
@@ -142,6 +143,55 @@ public class APSP_B_F_Johnson {
         }
 
         return runBellmanFordSingleSourcePath(graph, 0);
+    }
+
+    @Test
+    public void testDijkstraShortestPath1() throws Exception {
+        long[] resArray = new long[6];
+        int[] destArray = new int[]{1, 2, 3, 4, 5, 6};
+        Graph graph = readGraphFromFile("resource/JohnsonDijkstraTest1.txt");
+        prepareAdjacencyListForDijkstra(graph);
+        int source = 1;
+        org.junit.Assert.assertEquals(0, runDijkstraForGivenSource(resArray, destArray, graph, source, new long[]{0, 0, 0, 0, 0, 0}));
+        org.junit.Assert.assertEquals(Arrays.toString(new long[]{0, 45, 10, 25, 45, INFINITY}), Arrays.toString(resArray));
+    }
+
+    private int runDijkstraForGivenSource(long[] resArray, int[] destArray, Graph graph, int source, long P[]) {
+
+        long w = INFINITY;
+        int minDest = 0;
+        for (int i = 0; i < destArray.length; i++) {
+            resArray[i] = runDijkstra(graph, source, destArray[i]);
+            long minW = resArray[i] - P[source] + P[i];
+            if (minW < w) {
+                minDest = i;
+                w = minW;
+                resArray[i] = minW;
+            }
+            for (int v = 1; v < graph.vertexes.length; v++) {
+                Vertex vertex = graph.vertexes[v];
+                vertex.score = 0;
+                vertex.visited = false;
+            }
+        }
+        return minDest;
+    }
+
+    private void prepareAdjacencyListForDijkstra(Graph graph) {
+        for (Edge edge : graph.edges) {
+            graph.vertexes[edge.u].adjacencyList.add(edge);
+        }
+    }
+
+    @Test
+    public void testDijkstraShortestPath2() throws Exception {
+
+        long[] resArray = new long[5];
+        int[] destArray = new int[]{1, 2, 3, 4, 5};
+        Graph graph = readGraphFromFile("resource/JohnsonDijkstraTest2.txt");
+        prepareAdjacencyListForDijkstra(graph);
+        org.junit.Assert.assertEquals(0, runDijkstraForGivenSource(resArray, destArray, graph, 1, new long[]{0, 0, 0, 0, 0, 0}));
+        org.junit.Assert.assertEquals(Arrays.toString(new int[]{0, 10, 50, 30, 60}), Arrays.toString(resArray));
     }
 
     @Test
@@ -218,6 +268,9 @@ public class APSP_B_F_Johnson {
     static class Vertex {
         private int v;
         long score;
+        boolean visited;
+
+        private List<Edge> adjacencyList = new ArrayList<>();
 
         Vertex(int v) {
             this.v = v;
@@ -238,6 +291,13 @@ public class APSP_B_F_Johnson {
         @Override
         public int hashCode() {
             return v;
+        }
+
+        @Override
+        public String toString() {
+            return "Vertex{" +
+                    v +
+                    '}';
         }
     }
 
