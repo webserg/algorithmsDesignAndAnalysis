@@ -29,19 +29,22 @@ public class APSP_B_F_Johnson {
         long res = INFINITY;
 
         long P[] = mutatingGtoGM(graph);
-        graph.edges = Arrays.copyOf(graph.edges, graph.m);
         int[] destArray = new int[graph.n];
         for (int i = 0; i < graph.n; i++) {
             destArray[i] = i + 1;
         }
         long[] resArray;
-        prepareAdjacencyListForDijkstra(graph);
+//        prepareAdjacencyListForDijkstra(graph);
         for (int j = 1; j <= graph.n; j++) {
+            System.out.println("dijkstra source = " + j);
             resArray = new long[graph.n];
             int source = j;
             int minDestIdx = runDijkstraForGivenSource(resArray, destArray, graph, source, P);
             long curW = resArray[minDestIdx];
-            if (curW < res) res = curW;
+            if (curW < res) {
+                res = curW;
+                System.out.println(curW);
+            }
         }
         return res;
     }
@@ -126,6 +129,7 @@ public class APSP_B_F_Johnson {
             edge.w = edge.w + P[edge.u] - P[edge.v]; // mutating to G'
             graph.vertexes[edge.u].adjacencyList.add(edge);
         }
+        System.out.println("G->G'");
         return P;
     }
 
@@ -167,6 +171,7 @@ public class APSP_B_F_Johnson {
                 minDest = i;
                 w = minW;
                 resArray[i] = minW;
+                System.out.println(minW);
             }
             for (int v = 1; v < graph.vertexes.length; v++) {
                 Vertex vertex = graph.vertexes[v];
@@ -200,17 +205,30 @@ public class APSP_B_F_Johnson {
         org.junit.Assert.assertEquals(-8, res);
     }
 
-
     @Test
     public void testJohnson2() throws Exception {
         long res = runJohnson(readGraphFromFile("resource/gTest5.txt"));
         org.junit.Assert.assertEquals(-3, res);
     }
 
+
     @Test
     public void testJohnson3() throws Exception {
         long res = runJohnson(readGraphFromFile("resource/g3.txt"));
         org.junit.Assert.assertEquals(-19, res);
+    }
+
+    @Test
+    public void testJohnson4() throws Exception {
+        long res = runJohnson(readGraphFromFile("resource/bellmanFordTest2.txt"));
+        org.junit.Assert.assertEquals(-3, res);
+    }
+
+
+    @Test
+    public void testAPSPLarge() throws Exception {
+        long res = runJohnson(readGraphFromFile("resource/large.txt"));//not solved out of memory, looks like need another algorithm
+        org.junit.Assert.assertEquals(-6, res);
     }
 
     @Test
@@ -260,10 +278,10 @@ public class APSP_B_F_Johnson {
     }
 
 
-    @Test
-    public void testAPSPLarge() throws Exception {
-        Graph graph = readGraphFromFile("resource/large.txt");
-    }
+//    @Test
+//    public void testAPSPLarge() throws Exception {
+//        Graph graph = readGraphFromFile("resource/large.txt");
+//    }
 
     static class Vertex {
         private int v;
@@ -357,7 +375,7 @@ public class APSP_B_F_Johnson {
         } catch (IOException x) {
             System.out.println("IOException:" + x.getMessage());
         }
-
+        System.out.println("graph ready");
         return new Graph(edgesNum, N, vertexes, edges);
     }
 
