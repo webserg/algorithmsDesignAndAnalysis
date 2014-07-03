@@ -34,23 +34,20 @@ public class APSP_B_F_Johnson {
             destArray[i] = i + 1;
         }
         long[] resArray;
-//        prepareAdjacencyListForDijkstra(graph);
         for (int j = 1; j <= graph.n; j++) {
-            System.out.println("dijkstra source = " + j);
             resArray = new long[graph.n];
             int source = j;
             int minDestIdx = runDijkstraForGivenSource(resArray, destArray, graph, source, P);
             long curW = resArray[minDestIdx];
             if (curW < res) {
                 res = curW;
-                System.out.println(curW);
             }
         }
         return res;
     }
 
     private long runDijkstra(Graph graph, int source, int destination) {
-        PriorityQueue<Vertex> priorityQueue = new PriorityQueue<>(graph.n, new VertexComparator());
+        PriorityQueue<Vertex> priorityQueue = new PriorityQueue<>(100, new VertexComparator());
         Vertex cur = graph.vertexes[source];
         Vertex dest = graph.vertexes[destination];
         for (Edge edge : cur.adjacencyList) {
@@ -61,7 +58,7 @@ public class APSP_B_F_Johnson {
         while (!cur.equals(dest)) {
             Vertex min;
             min = priorityQueue.poll();
-            if (min == null) return INFINITY-1000;//no way
+            if (min == null) return INFINITY-10000;//no way
             cur = min;
             if (!cur.visited) {
                 List<Edge> adj = cur.adjacencyList;
@@ -129,7 +126,6 @@ public class APSP_B_F_Johnson {
             edge.w = edge.w + P[edge.u] - P[edge.v]; // mutating to G'
             graph.vertexes[edge.u].adjacencyList.add(edge);
         }
-        System.out.println("G->G'");
         return P;
     }
 
@@ -171,7 +167,6 @@ public class APSP_B_F_Johnson {
                 minDest = i;
                 w = minW;
                 resArray[i] = minW;
-                System.out.println(minW);
             }
             for (int v = 1; v < graph.vertexes.length; v++) {
                 Vertex vertex = graph.vertexes[v];
@@ -227,8 +222,15 @@ public class APSP_B_F_Johnson {
 
     @Test
     public void testAPSPLarge() throws Exception {
-        long res = runJohnson(readGraphFromFile("resource/large.txt"));//not solved out of memory, looks like need another algorithm
+        long res = runJohnson(readGraphFromFile("resource/large.txt"));//takes a lot of time
         org.junit.Assert.assertEquals(-6, res);
+    }
+
+    @Test
+    public void testAPSPLargeUsingTrickAdditOneSourceToAllVertexes() throws Exception {
+        long res[] = reWeighting(readGraphFromFile("resource/large.txt"));
+        Arrays.sort(res);
+        org.junit.Assert.assertEquals(-6, res[0]);
     }
 
     @Test
