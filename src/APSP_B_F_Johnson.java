@@ -153,7 +153,7 @@ public class APSP_B_F_Johnson {
         prepareAdjacencyListForDijkstra(graph);
         int source = 1;
         org.junit.Assert.assertEquals(0, runDijkstraForGivenSource(resArray, destArray, graph, source, new long[]{0, 0, 0, 0, 0, 0}));
-        org.junit.Assert.assertEquals(Arrays.toString(new long[]{0, 45, 10, 25, 45, INFINITY}), Arrays.toString(resArray));
+        org.junit.Assert.assertEquals(Arrays.toString(new long[]{0, 45, 10, 25, 45, INFINITY-10000}), Arrays.toString(resArray));
     }
 
     private int runDijkstraForGivenSource(long[] resArray, int[] destArray, Graph graph, int source, long P[]) {
