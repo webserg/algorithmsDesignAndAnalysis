@@ -12,6 +12,7 @@ public class BitSetUsing {
         bitSet2.set(2);
         bitSet2.set(24);
         BitSet bitSet3 = new BitSet(24);
+//        Math.
         bitSet3 =(BitSet) bitSet.clone();
         System.out.println(bitSet.cardinality());
         System.out.println(bitSet2.cardinality());
