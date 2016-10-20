@@ -12,7 +12,11 @@ import static org.junit.Assert.assertTrue;
  */
 public class QuickSortComparisonsCount {
     long comparison = 0;
-    boolean debug = true;
+    boolean debug = false;
+    private static final int FIRST_PIVOT = 1;
+    private static final int LAST_PIVOT = 2;
+    private static final int MIDDLE_PIVOT = 3;
+    private static int CURRENT_PIVOT = FIRST_PIVOT;
 
     @Test
     public void testSortSimle() throws Exception {
@@ -118,7 +122,16 @@ public class QuickSortComparisonsCount {
     }
 
     private int choosePivot(int a[], int str, int l) {
-        return pivotLikeFirstElement(a, str, l);
+        switch (CURRENT_PIVOT) {
+            case FIRST_PIVOT:
+                return pivotLikeFirstElement(a, str, l);
+            case LAST_PIVOT:
+                return pivotLikeLastElement(a, str, l);
+            case MIDDLE_PIVOT:
+                return pivotMedianOfThree(a, str, l);
+            default:
+                return pivotLikeFirstElement(a, str, l);
+        }
     }
 
     private int pivotLikeFirstElement(int a[], int str, int l) {

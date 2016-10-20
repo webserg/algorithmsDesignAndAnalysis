@@ -16,9 +16,9 @@ public class QuickSortComparCountLast {
         System.out.println("start...");
         int result[] = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9};
 //        int source[] = new int[]{9,8,7,6,5,4,3,2,1};
-        int[] source = ShuffleArray.shuffle(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9});
+//        int[] source = ShuffleArray.shuffle(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9});
 //        int[] source = new int[]{3, 8, 2, 5};
-//        int source[] = FilesHelper.readIntArrayFromFile("resource/QuickSort.txt", 10000);
+        int source[] = FilesHelper.readIntArrayFromFile("resource/QuickSort.txt", 10000);
 //        assertFalse(Arrays.equals(result, source));
         System.out.println(Arrays.toString(source));
         quickSort(source, 0, source.length - 1);
