@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 /**
  * User: webserg
  * Date: 27.02.13
+ * VM option -Xmx2048m -Xss1024m
  */
 public class SCC {
     private static Logger log = Logger.getLogger(KargerMinCut.class.getName());
@@ -68,7 +69,7 @@ public class SCC {
         Assert.assertEquals(Arrays.toString(new int[]{2, 1, 0, 0, 0}), Arrays.toString(sccCore.run(3, "resource/SCCTest9.txt")));
     }
 
-    //    @Test
+    @Test
     public void testScc8() throws Exception {
         SCCCore sccCore = new SCCCore();
         long t1 = System.currentTimeMillis();
