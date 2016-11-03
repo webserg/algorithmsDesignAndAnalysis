@@ -1,3 +1,5 @@
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -22,34 +24,62 @@ public class TopologicalSort {
     }
 
     public static void test(String[] args) throws java.lang.Exception {
+        Graph graph = null;
         java.io.BufferedReader r = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));
         String s = r.readLine();
-        String[] line = s.split(" ");
-        int N = Integer.parseInt(line[0]);
-        int m = Integer.parseInt(line[1]);
-        int lines = 0;
-        Graph graph = new Graph(N);
-        while (lines < m) {
-            lines++;
-            line = r.readLine().split(" ");
-            addPath(graph, Integer.parseInt(line[0]), Integer.parseInt(line[1]));
+        if (!s.isEmpty()) {
+//        if (false) {
+            String[] line = s.split(" ");
+            int N = Integer.parseInt(line[0]);
+            int m = Integer.parseInt(line[1]);
+            if (!check1(N, m)) {
+                System.out.println("Sandro fails.");
+                return;
+            }
+            int l = 0;
+            graph = new Graph(N, m);
+            while (l < m) {
+                l++;
+                line = r.readLine().split(" ");
+                int x = Integer.parseInt(line[0]);
+                int y = Integer.parseInt(line[1]);
+                if (!check2(x) || !check2(y)) {
+                    System.out.println("Sandro fails.");
+                    return;
+                }
+                addPath(graph, x, y);
+            }
+        } else {
+            List<String> lines;
+            lines = Files.readAllLines(Paths.get("./resource/topoSearch5.txt"));
+            String[] line = lines.get(1).split(" ");
+            int N = Integer.parseInt(line[0]);
+            int m = Integer.parseInt(line[1]);
+            graph = new Graph(N, m);
+            for (int i = 0; i < m; i++) {
+                line = lines.get(i + 2).split(" ");
+                addPath(graph, Integer.parseInt(line[0]), Integer.parseInt(line[1]));
+            }
         }
-//        for (Vertex v : graph.adjacencyList.keySet()) {
-//            System.out.print(v);
-//            System.out.println(graph.adjacencyList.get(v));
-//        }
         toposearch(graph);
         StringBuilder result = new StringBuilder();
-        int counter = 0;
-        while (!graph.topoStack.isEmpty()) {
-            result.append(graph.topoStack.take().name).append(" ");
-            counter++;
-        }
-        if (counter != graph.allVisited()) {
-            System.out.println("Sandro fails.");
+        if (graph.hasCycle) {
+            result.append("Sandro fails.");
         } else {
-            System.out.println(result.toString());
+            while (!graph.topoStack.isEmpty()) {
+                result.append(graph.topoStack.take().name).append(" ");
+            }
         }
+        System.out.println(result.toString().trim());
+//        assert result.toString().trim().equals(lines.get(0)) : lines.get(0);
+    }
+
+    private static boolean check1(int n, int m) {
+        return n > 0 && n < 10001 && m > 0 && m < 1000000;
+    }
+
+    private static boolean check2(int x) {
+        return x > 0 && x < 10001;
     }
 
 
@@ -58,41 +88,54 @@ public class TopologicalSort {
         for (Vertex v : vertexSet) {
             if (!graph.isVertexVisited(v)) {
                 dfs(graph, v);
+                if (graph.hasCycle) return;
             }
         }
     }
 
 
     private static void dfs(Graph graph, Vertex s) {
-        graph.vertexVisit[s.name] = 1;
-        List<Vertex> secondVertexofTheEdge = graph.adjacencyList.get(s);
-        if (secondVertexofTheEdge != null)
+        graph.markVertextVisited(s);
+        s.onStack = true;
+        if (graph.adjacencyList.get(s) != null) {
+            List<Vertex> secondVertexofTheEdge = graph.adjacencyList.get(s);
+            Collections.sort(secondVertexofTheEdge, Vertex::compareTo);
             for (Vertex v : secondVertexofTheEdge) {
+                if (v.onStack) {
+                    graph.hasCycle = true;
+                    System.out.println("Sandro fails."); System.exit(0);
+                }
                 if (!graph.isVertexVisited(v)) {
                     dfs(graph, v);
                 }
             }
+        }
+        s.onStack = false;
         graph.topoStack.put(s);
     }
 
+
     private static void addPath(Graph graph, int v1, int v2) {
-        if (!graph.adjacencyList.containsKey(new Vertex(v1))) {
-            graph.adjacencyList.put(new Vertex(v1), new ArrayList<>());
+        Vertex ver1 = graph.createVertex(v1);
+        Vertex ver2 = graph.createVertex(v2);
+        if (!graph.adjacencyList.containsKey(ver1)) {
+            graph.adjacencyList.put(ver1, new ArrayList<>());
         }
-        graph.adjacencyList.get(new Vertex(v1)).add(new Vertex(v2));
+        graph.adjacencyList.get(ver1).add(ver2);
     }
 
 
     static private class Graph {
+        boolean hasCycle = false;
         private int N;
         Map<Vertex, List<Vertex>> adjacencyList;
-        int[] vertexVisit;
-        Stack<Vertex> topoStack = new Stack<Vertex>(new ArrayDeque<Vertex>(N));
+        HashMap<Integer, Vertex> vertex;
+        Stack<Vertex> topoStack = new Stack<>(new ArrayDeque<>(N));
 
-        public Graph(int n) {
+        public Graph(int n, int m) {
             N = n;
-            adjacencyList = new HashMap<>();
-            vertexVisit = new int[10000+1];
+            adjacencyList = new HashMap<>(m);
+            vertex = new HashMap<>(m);
         }
 
         public int getN() {
@@ -100,22 +143,25 @@ public class TopologicalSort {
         }
 
         boolean isVertexVisited(Vertex v) {
-            return vertexVisit[v.name] == 1;
+            return v.isVisited;
         }
 
-        int allVisited() {
-            int s = 0;
-            for (int i = 0; i < vertexVisit.length; i++) {
-                if (vertexVisit[i] == 1) {
-                    s++;
-                }
+        private void markVertextVisited(Vertex s) {
+            s.isVisited = true;
+        }
+
+        Vertex createVertex(int v) {
+            if (!vertex.keySet().contains(v)) {
+                vertex.put(v, new Vertex(v));
             }
-            return s;
+            return vertex.get(v);
         }
     }
 
-    static private class Vertex {
+    static private class Vertex implements Comparable {
         private final int name;
+        boolean onStack = false;
+        boolean isVisited = false;
 
         Vertex(int name) {
             this.name = name;
@@ -129,12 +175,15 @@ public class TopologicalSort {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-
             Vertex vertex = (Vertex) o;
-
             return name == vertex.getName();
         }
 
+        @Override
+        public int compareTo(Object o) {
+            int ov = ((Vertex) o).name;
+            return name < ov ? 1 : name > ov ? -1 : 0;
+        }
 
         @Override
         public int hashCode() {
