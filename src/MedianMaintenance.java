@@ -28,41 +28,34 @@ public class MedianMaintenance {
         int[] intArray = FilesHelper.readIntArrayFromFile("resource/median.txt", 10000);
 
         int res = new MedianMaintenance().run(intArray);
-        log.severe(res + "");
+        log.severe(res + "");//1213
     }
 
     private int run(int[] intArray) {
-        Comparator<Integer> comparatorLow = new Comparator<Integer>() {
-            @Override
-            public int compare(Integer o1, Integer o2) {
-                int res = o1.compareTo(o2);
-                if (res == 0) return 0;
-                return res < 0 ? 1 : -1;
-            }
-        };
         int[] resArray = new int[intArray.length];
         int resSum = 0;
-        PriorityQueue<Integer> hlow = new PriorityQueue<>(intArray.length, comparatorLow);
-        PriorityQueue<Integer> hhight = new PriorityQueue<>(intArray.length);
+        PriorityQueue<Integer> heapMax = new PriorityQueue<>(intArray.length, Comparator.<Integer>naturalOrder().reversed());
+        PriorityQueue<Integer> heapMin = new PriorityQueue<>(intArray.length);
 
         for (int i = 0; i < intArray.length; i++) {
             int n = intArray[i];
-            if (hlow.isEmpty() && hhight.isEmpty()) {
-                hlow.offer(n);
+            if (heapMax.isEmpty() && heapMin.isEmpty()) {
+                heapMax.offer(n);
             } else {
-                if (n < hlow.peek()) {
-                    hlow.offer(n);
+                if (n < heapMax.peek()) {
+                    heapMax.offer(n);
                 } else {
-                    hhight.offer(n);
+                    heapMin.offer(n);
                 }
-                if (hlow.size() < hhight.size() - 1)
-                    hlow.offer(hhight.poll());
-                else if (hhight.size() < hlow.size() - 1)
-                    hhight.offer(hlow.poll());
+                if (heapMax.size() < heapMin.size() - 1)
+                    heapMax.offer(heapMin.poll());
+                else if (heapMin.size() < heapMax.size() - 1)
+                    heapMin.offer(heapMax.poll());
             }
 
 
-            resArray[i] = hlow.size() < hhight.size() ? hhight.peek() : hlow.peek();
+            resArray[i] = heapMax.size() < heapMin.size() ? heapMin.peek() : heapMax.peek();
+            System.out.println(resArray[i]);
             resSum += resArray[i];
 
         }

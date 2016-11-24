@@ -25,33 +25,34 @@ public class TopologicalSort {
 
     public static void test(String[] args) throws java.lang.Exception {
         Graph graph = null;
-        java.io.BufferedReader r = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));
-        String s = r.readLine();
-        if (!s.isEmpty()) {
-//        if (false) {
-            String[] line = s.split(" ");
-            int N = Integer.parseInt(line[0]);
-            int m = Integer.parseInt(line[1]);
-            if (!check1(N, m)) {
-                System.out.println("Sandro fails.");
-                return;
-            }
-            int l = 0;
-            graph = new Graph(N, m);
-            while (l < m) {
-                l++;
-                line = r.readLine().split(" ");
-                int x = Integer.parseInt(line[0]);
-                int y = Integer.parseInt(line[1]);
-                if (!check2(x) || !check2(y)) {
+        if (false) {
+            java.io.BufferedReader r = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));
+            String s = r.readLine();
+            if (!s.isEmpty()) {
+                String[] line = s.split(" ");
+                int N = Integer.parseInt(line[0]);
+                int m = Integer.parseInt(line[1]);
+                if (!check1(N, m)) {
                     System.out.println("Sandro fails.");
                     return;
                 }
-                addPath(graph, x, y);
+                int l = 0;
+                graph = new Graph(N, m);
+                while (l < m) {
+                    l++;
+                    line = r.readLine().split(" ");
+                    int x = Integer.parseInt(line[0]);
+                    int y = Integer.parseInt(line[1]);
+                    if (!check2(x) || !check2(y)) {
+                        System.out.println("Sandro fails.");
+                        return;
+                    }
+                    addPath(graph, x, y);
+                }
             }
         } else {
             List<String> lines;
-            lines = Files.readAllLines(Paths.get("./resource/topoSearch5.txt"));
+            lines = Files.readAllLines(Paths.get("./resource/topoSearchKnuthTest.txt"));
             String[] line = lines.get(1).split(" ");
             int N = Integer.parseInt(line[0]);
             int m = Integer.parseInt(line[1]);
@@ -98,12 +99,13 @@ public class TopologicalSort {
         graph.markVertextVisited(s);
         s.onStack = true;
         if (graph.adjacencyList.get(s) != null) {
-            List<Vertex> secondVertexofTheEdge = graph.adjacencyList.get(s);
-            Collections.sort(secondVertexofTheEdge, Vertex::compareTo);
+            TreeSet<Vertex> secondVertexofTheEdge = new TreeSet(graph.adjacencyList.get(s));
+//            Collections.sort(secondVertexofTheEdge, Vertex::compareTo);
             for (Vertex v : secondVertexofTheEdge) {
                 if (v.onStack) {
                     graph.hasCycle = true;
-                    System.out.println("Sandro fails."); System.exit(0);
+                    System.out.println("Sandro fails.");
+                    System.exit(0);
                 }
                 if (!graph.isVertexVisited(v)) {
                     dfs(graph, v);

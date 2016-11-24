@@ -21,33 +21,43 @@ public class SumOfTwoProblem {
     public void testMedianMaintenance1() throws Exception {
 
         int[] intArray = FilesHelper.readIntRangeArrayFromFile("resource/HashInt.txt", 500000, 2500, 4000);
-        Assert.assertEquals(50, run(intArray,2500, 4000));
+       // Assert.assertEquals(50, run(intArray,2500, 4000));
     }
 
     @Test
     public void testMedianMaintenance2() throws Exception {
 
-        int[] intArray = FilesHelper.readIntRangeArrayFromFile("resource/hashIntTest1.txt", 100, 30, 60);
+        long[] intArray = FilesHelper.readLongArrayFromFile("resource/hashIntTest1.txt", 100, 30, 60);
         Assert.assertEquals(9, run(intArray, 30, 60));
     }
 
     @Test
     public void testMedianMaintenance3() throws Exception {
 
-        int[] intArray = FilesHelper.readIntRangeArrayFromFile("resource/hashIntTest1.txt", 100, 60, 100);
+        long[] intArray = FilesHelper.readLongArrayFromFile("resource/hashIntTest1.txt", 100, 60, 100);
         Assert.assertEquals(28, run(intArray, 60, 100));
     }
 
-    private int run(int[] intArray, int startRange, int endRange) {
-        Set<Integer> hashSet = new HashSet<>(intArray.length);
-        Set<Integer> hashSetT = new HashSet<>(intArray.length);
-        for (int n : intArray) {
+    @Test
+    public void testMedianMaintenance() throws Exception {
+
+        long[] intArray = FilesHelper.readLongArrayFromFile("resource/2sum.txt", 1000000, -10000, 10000);
+        Assert.assertEquals(28, run(intArray, -10000, 10000));
+    }
+
+    private int run(long[] intArray, long startRange, long endRange) {
+        Set<Long> hashSet = new HashSet<>(intArray.length);
+        Set<Long> hashSetT = new HashSet<>(intArray.length);
+        for (long n : intArray) {
             hashSet.add(n);
         }
         int resCount = 0;
-        for (int t = startRange; t <= endRange; t++) {
-            for (int x : intArray) {
-                int y = t - x;
+        for (long t = startRange; t <= endRange; t++) {
+            for (long x : intArray) {
+                long y = t - x;
+                boolean xMinusYPlus = y > 0 && x < 0;
+                boolean yMinusXPlus = y < 0 && x > 0;
+                if(xMinusYPlus || yMinusXPlus)
                 if (hashSet.contains(y) && !hashSetT.contains(t)) {
                     if (x != y) {
 //                        log.info("x=" + x + "; y=" + y +";t=" + t);

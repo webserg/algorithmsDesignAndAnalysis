@@ -61,7 +61,6 @@ public class FilesHelper {
             while ((line = reader.readLine()) != null) {
                 result[idx++] = Integer.parseInt(line);
             }
-
             reader.close();
         } catch (IOException x) {
             log.severe("IOException:" + x.getMessage());
@@ -85,6 +84,32 @@ public class FilesHelper {
 
             reader.close();
             result2 = new int[idx];
+
+            for(int i=0;i<idx;i++){
+                result2[i] = result[i];
+            }
+            return result2;
+        } catch (IOException x) {
+            log.severe("IOException:" + x.getMessage());
+        }
+        return result2;
+    }
+
+    static long[] readLongArrayFromFile(String filePath, int arraySize, int startRange, int endRange) {
+        Charset charset = Charset.forName("UTF-8");
+        Path path = Paths.get(filePath);
+        long result[] = new long[arraySize];
+        long result2[] = null;
+        int idx = 0;
+        try (BufferedReader reader = Files.newBufferedReader(path, charset)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                long n = Long.parseLong(line);
+                result[idx++] = n;
+            }
+
+            reader.close();
+            result2 = new long[idx];
 
             for(int i=0;i<idx;i++){
                 result2[i] = result[i];

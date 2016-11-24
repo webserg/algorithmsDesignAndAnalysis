@@ -1,3 +1,4 @@
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -41,7 +42,7 @@ public class TopologicalSortKnuth {
             }
         } else {
             List<String> lines;
-            lines = Files.readAllLines(Paths.get("./resource/topoSearch5.txt"));
+            lines = Files.readAllLines(Paths.get("./resource/topoSearchKnuthTest.txt"));
             String[] line = lines.get(1).split(" ");
             int N = Integer.parseInt(line[0]);
             int m = Integer.parseInt(line[1]);
@@ -56,19 +57,22 @@ public class TopologicalSortKnuth {
             System.out.println("Sandro fails.");
             System.exit(0);
         } else {
-            StringBuilder result = new StringBuilder();
+            PrintWriter prw = new PrintWriter(System.out, false);
             for (int i = 0; i < topoList.size(); i++) {
-                result.append(topoList.get(i) + " ");
+                prw.print(topoList.get(i) + " ");
             }
-            System.out.println(result);
+            prw.flush();
         }
     }
 
     private static List<Integer> topoSort(Graph graph) {
         List<Integer> topoList = new ArrayList<>(graph.getN());
-        Set<Integer> zeroSet = new HashSet<>(graph.adjacencyList.keySet());
-        zeroSet.removeAll(graph.incomingEdgeCounter.keySet());
-        Queue<Integer> s = new ArrayDeque<>(zeroSet);
+        Queue<Integer> s = new ArrayDeque<>();
+        for (int i = 1; i < graph.incomingEdgeCounter.length; i++) {
+            if(graph.incomingEdgeCounter[i] == 0){
+                s.offer(i);
+            }
+        }
         while (!s.isEmpty()) {
             int n = s.poll();
             topoList.add(n);
@@ -77,10 +81,9 @@ public class TopologicalSortKnuth {
             if (adjList != null) {
                 for (int i = 0; i < adjList.size(); i++) {
                     Integer v = adjList.get(i);
-                    Integer c = graph.incomingEdgeCounter.get(v);
-                    graph.incomingEdgeCounter.put(v, --c);
+                    graph.incomingEdgeCounter[v]--;
                     graph.M--;
-                    if (c == 0) {
+                    if (graph.incomingEdgeCounter[v] == 0) {
                         localZeroIncomeList.add(v);
                     }
                 }
@@ -103,13 +106,13 @@ public class TopologicalSortKnuth {
         final int N;
         int M;
         Map<Integer, List<Integer>> adjacencyList;
-        Map<Integer, Integer> incomingEdgeCounter;
+        int[] incomingEdgeCounter;
 
         public Graph(int n, int m) {
             N = n;
             M = m;
             adjacencyList = new HashMap<>(n);
-            incomingEdgeCounter = new HashMap<>(n);
+            incomingEdgeCounter = new int[n+1];
         }
 
         public int getN() {
@@ -117,12 +120,7 @@ public class TopologicalSortKnuth {
         }
 
         void addEdge(int x, int y) {
-            Integer c = incomingEdgeCounter.get(y);
-            if (c == null) {
-                incomingEdgeCounter.put(y, 1);
-            } else {
-                incomingEdgeCounter.put(y, c + 1);
-            }
+            incomingEdgeCounter[y]++;
             List<Integer> adjList = adjacencyList.get(x);
             if (adjList == null) {
                 adjList = new ArrayList<>();
