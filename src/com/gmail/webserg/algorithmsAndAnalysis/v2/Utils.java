@@ -30,7 +30,15 @@ public class Utils {
     public static boolean isSorted(int[] source) {
         boolean res = false;
         for (int i = 0; i < source.length - 1; i++) {
-            res = source[i] < source[i + 1];
+            res = source[i] <= source[i + 1];
+        }
+        return res;
+    }
+
+    public static boolean isSorted(Comparable[] source) {
+        boolean res = false;
+        for (int i = 0; i < source.length - 1; i++) {
+            res = source[i].compareTo(source[i + 1]) < 1;
         }
         return res;
     }
