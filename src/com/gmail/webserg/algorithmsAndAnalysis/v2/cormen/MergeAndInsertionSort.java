@@ -3,18 +3,20 @@ package com.gmail.webserg.algorithmsAndAnalysis.v2.cormen;
 import com.gmail.webserg.algorithmsAndAnalysis.v2.Utils;
 import org.junit.Assert;
 
-import java.util.Arrays;
+/**
+ * insertion sort works better on presorted arrays, so if you are lucky combination merge sort and insertion sort
+ * can work faster
+ */
+public class MergeAndInsertionSort {
+    static final int n = 200000;
 
-public class MergeSort {
     public static void main(String[] args) {
-        int n = 200000;
         int[] input = Utils.shuffle(Utils.getSequence(n));
 //        System.out.println(Arrays.toString(input));
         long start = System.currentTimeMillis();
         int[] res = mergeSort(input, 0, input.length - 1);
         long end = System.currentTimeMillis();
         System.out.println(end - start);
-
 //        System.out.println(Arrays.toString(res));
         Assert.assertTrue(Utils.isSorted(res));
     }
@@ -41,11 +43,13 @@ public class MergeSort {
     }
 
     private static int[] mergeSort(int[] source, int l, int r) {
-        if (l < r) {
+        if (r - l > 10) {
             int m = (l + r) >>> 1;
             mergeSort(source, l, m);
             mergeSort(source, m + 1, r);
             merge(source, l, m, m + 1, r);
+        } else {
+            InsertionSort.insertionSort(source, l, r);
         }
         return source;
     }
