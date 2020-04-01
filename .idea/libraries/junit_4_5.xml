@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="junit-4.5">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../webserg-common/lib/junit_4/junit-4.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../webserg-common/lib/junit-4.12.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
