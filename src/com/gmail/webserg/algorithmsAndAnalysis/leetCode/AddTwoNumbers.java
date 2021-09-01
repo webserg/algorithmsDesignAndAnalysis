@@ -80,25 +80,3 @@ public class AddTwoNumbers {
     }
 }
 
-class ListNode {
-    int val;
-    ListNode next;
-
-    ListNode(int x) {
-        val = x;
-    }
-
-    void print() {
-        ListNode cur = this;
-        while (cur != null) {
-            System.out.print(cur.val + "->");
-            cur = cur.next;
-        }
-
-    }
-
-    @Override
-    public String toString() {
-        return val + "";
-    }
-}

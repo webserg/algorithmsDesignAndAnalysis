@@ -1,12 +1,17 @@
 package com.gmail.webserg.algorithmsAndAnalysis.leetCode;
 
+/**
+ * Input: s = "babad"
+ * Output: "bab"
+ * Note: "aba" is also a valid answer.
+ */
 public class LongestPalindrome {
     static String longestPalindrome(String s1) {
         int max = 0;
         String s2 = reverse(s1);
         int start = 0;
         int start_i = 0;
-        int dp[][] = new int[s1.length()][s2.length()];
+        int[][] dp = new int[s1.length()][s2.length()];
         for (int i = 0; i < s1.length(); i++) {
             for (int j = 0; j < s2.length(); j++) {
                 if (s1.charAt(i) == s2.charAt(j)) {

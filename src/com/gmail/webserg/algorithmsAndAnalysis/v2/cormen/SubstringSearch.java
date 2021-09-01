@@ -1,6 +1,6 @@
 package com.gmail.webserg.algorithmsAndAnalysis.v2.cormen;
 
-import javafx.util.Pair;
+
 import org.junit.Assert;
 
 public class SubstringSearch {
@@ -31,8 +31,34 @@ public class SubstringSearch {
                 new Pair("f", "abchfhgfhgfhgfhgfvcbcgjhkjk"),
                 new Pair("jk", "abchfhgfhgfhgfhgfvcbcgjhkjk")};
         for (int i = 0; i < pairs.length; i++) {
-            Assert.assertEquals(pairs[i].getValue().indexOf(pairs[i].getKey()),
-                    searchSubString(pairs[i].getKey(), (pairs[i].getValue())));
+            Assert.assertEquals(pairs[i].getRight().indexOf(pairs[i].getLeft()),
+                    searchSubString(pairs[i].getLeft(), (pairs[i].getRight())));
         }
+    }
+}
+
+class Pair<L, R> {
+    private L left;
+    private R right;
+
+    public Pair(L left, R right) {
+        this.left = left;
+        this.right = right;
+    }
+
+    public L getLeft() {
+        return left;
+    }
+
+    public void setLeft(L left) {
+        this.left = left;
+    }
+
+    public R getRight() {
+        return right;
+    }
+
+    public void setRight(R right) {
+        this.right = right;
     }
 }
