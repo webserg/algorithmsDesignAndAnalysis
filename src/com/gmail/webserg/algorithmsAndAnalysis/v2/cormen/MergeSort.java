@@ -3,8 +3,6 @@ package com.gmail.webserg.algorithmsAndAnalysis.v2.cormen;
 import com.gmail.webserg.algorithmsAndAnalysis.v2.Utils;
 import org.junit.Assert;
 
-import java.util.Arrays;
-
 public class MergeSort {
     public static void main(String[] args) {
         int n = 200000;
