@@ -39,6 +39,23 @@ public class RemoveDuplicateArray {
         return j+1;
     }
 
+    public static int removeDuplicates2(int[] nums) {
+        if (nums.length < 2) return nums.length;
+        int j = 0;
+        for (int i = 1; i < nums.length; i++) {
+            if(nums[i] != nums[j]){
+                j++;
+                nums[j] = nums[i];
+            }
+        }
+        System.out.print("[");
+        for (int i = 0; i < j+1; i++) {
+            System.out.print(nums[i] + " ");
+        }
+        System.out.println("]");
+        return j+1;
+    }
+
     public static void main(String[] args) {
         int[] arr = {2, 2, 2, 2, 2};
         System.out.println(removeDuplicates(arr));

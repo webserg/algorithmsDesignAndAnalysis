@@ -8,9 +8,9 @@ public class TreeNode {
 
     @Override
     public String toString() {
-        if (this == null) return "NULL";
-        String leftStr = this.left != null ? this.left.toString() : "NULL";
-        String rightStr = this.right != null ? this.right.toString() : "NULL";
+        if (this == null) return " null ";
+        String leftStr = this.left != null ? this.left.toString() : "null";
+        String rightStr = this.right != null ? this.right.toString() : "null";
         return "ROOT: " + val + " LEFT: " + leftStr + " RIGHT: " + rightStr;
     }
 }
