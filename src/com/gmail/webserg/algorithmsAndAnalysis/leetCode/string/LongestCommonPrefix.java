@@ -1,4 +1,4 @@
-package com.gmail.webserg.algorithmsAndAnalysis.leetCode;
+package com.gmail.webserg.algorithmsAndAnalysis.leetCode.string;
 
 import java.util.Arrays;
 

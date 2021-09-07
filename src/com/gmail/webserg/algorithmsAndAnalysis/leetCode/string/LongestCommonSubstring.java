@@ -1,4 +1,4 @@
-package com.gmail.webserg.algorithmsAndAnalysis.leetCode;
+package com.gmail.webserg.algorithmsAndAnalysis.leetCode.string;
 
 /**
  * In computer science, the longest common substring problem is to find the longest string that is a substring of two or more strings.

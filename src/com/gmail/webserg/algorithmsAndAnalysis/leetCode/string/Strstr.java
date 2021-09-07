@@ -1,4 +1,4 @@
-package com.gmail.webserg.algorithmsAndAnalysis.leetCode;
+package com.gmail.webserg.algorithmsAndAnalysis.leetCode.string;
 
 /**
  * Given two strings s1 and s2, find if s1 is a substring of s2. If yes, return the index of the first occurrence, else return -1.

@@ -1,4 +1,4 @@
-package com.gmail.webserg.algorithmsAndAnalysis.leetCode;
+package com.gmail.webserg.algorithmsAndAnalysis.leetCode.string;
 
 public class Anagram {
     static int NO_OF_CHARS = 256;
